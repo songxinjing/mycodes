@@ -1,0 +1,75 @@
+<link href="//cdn.bootcss.com/jquery.fancytree/2.15.0/skin-bootstrap/ui.fancytree.min.css" rel="stylesheet">
+	
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <button id="btnExpand" class="btn btn-primary">展开</button>
+      <button id="btncollapse" class="btn btn-warning">收缩</button>
+	  <button id="btnEdit" class="btn btn-warning">维护</button>
+    </div>
+    <div id="tree" class="div-tree">
+    </div>
+    <div class="panel-footer">
+      <b></b>
+    </div>
+</div>
+
+<script src="//cdn.bootcss.com/jquery.fancytree/2.15.0/jquery.fancytree-all.min.js"></script>
+<script type="text/javascript"> 
+  glyph_opts = {
+    map: {
+      doc: "glyphicon glyphicon-file",
+      docOpen: "glyphicon glyphicon-file",
+      checkbox: "glyphicon glyphicon-unchecked",
+      checkboxSelected: "glyphicon glyphicon-check",
+      checkboxUnknown: "glyphicon glyphicon-share",
+      dragHelper: "glyphicon glyphicon-play",
+      dropMarker: "glyphicon glyphicon-arrow-right",
+      error: "glyphicon glyphicon-warning-sign",
+      expanderClosed: "glyphicon glyphicon-menu-right",
+      expanderLazy: "glyphicon glyphicon-menu-right",  // glyphicon-plus-sign
+      expanderOpen: "glyphicon glyphicon-menu-down",  // glyphicon-collapse-down
+      folder: "glyphicon glyphicon-folder-close",
+      folderOpen: "glyphicon glyphicon-folder-open",
+      loading: "glyphicon glyphicon-refresh glyphicon-spin"
+    }
+  };
+
+  $(function(){  
+    $("#tree").fancytree({
+	  extensions: ["glyph"],
+	  glyph: glyph_opts,
+	  // checkbox: true,
+	  // selectMode: 2, // 1:single, 2:multi, 3:multi-hier (default: 2)
+	  autoScroll: true,
+	  quicksearch: true,
+      source: {url: "${rc.contextPath}/tree/data.html", debugDelay: 200},
+      lazyLoad: function(event, data) {
+	  	var node = data.node;
+      	data.result = {
+          url: "${rc.contextPath}/tree/data.html",
+          data: {key: node.key},
+		  debugDelay: 200
+        }
+      }
+    });	
+  });
+  
+  $("#btnExpand").on("click", function(event) {
+    var tree = $("#tree").fancytree("getTree");
+    tree.visit(function(node){
+      node.setExpanded(true);
+    });
+  });
+  
+  $("#btncollapse").on("click", function(event) {
+    var tree = $("#tree").fancytree("getTree");
+    tree.visit(function(node){
+      node.setExpanded(false);
+    });
+  });
+  
+  $("#btnEdit").on("click", function(event) {
+     location.href = "${rc.contextPath}/tree/edit.html"
+  });
+  
+</script>

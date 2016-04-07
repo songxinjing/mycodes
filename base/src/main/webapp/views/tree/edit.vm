@@ -1,0 +1,95 @@
+<link href="//cdn.bootcss.com/jquery.fancytree/2.15.0/skin-bootstrap/ui.fancytree.min.css" rel="stylesheet">
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+      <button id="btnExpand" class="btn btn-primary">展开</button>
+      <button id="btncollapse" class="btn btn-warning">收缩</button>
+    </div>
+	<div class="div-tree">
+      <table id="tree" class="table table-condensed table-hover table-striped fancytree-fade-expander">
+        <colgroup>
+          <col width="300px"></col>
+          <col width="*"></col>
+        </colgroup>
+		<thead>
+            <tr> 
+                <th>业务名称</th>
+                <th>操作</th>
+            </tr>
+		</thead>
+		<tbody>
+    		<tr>
+        		<td></td>
+        		<td>
+					<button id="btnAddChild" class="btn btn-sm btn-primary">新增子节点</button>
+					<button id="btnUpdate" class="btn btn-sm btn-warning">修改</button>
+					<button id="btnDelete" class="btn btn-sm btn-danger">删除</button>
+				</td>
+    	    </tr>
+		</tbody>
+      </table>
+	</div>
+	<div class="panel-footer">
+        <b></b>
+    </div>	
+</div>
+
+<script src="//cdn.bootcss.com/jquery.fancytree/2.15.0/jquery.fancytree-all.min.js"></script>
+<script type="text/javascript"> 
+  glyph_opts = {
+    map: {
+      doc: "glyphicon glyphicon-file",
+      docOpen: "glyphicon glyphicon-file",
+      checkbox: "glyphicon glyphicon-unchecked",
+      checkboxSelected: "glyphicon glyphicon-check",
+      checkboxUnknown: "glyphicon glyphicon-share",
+      dragHelper: "glyphicon glyphicon-play",
+      dropMarker: "glyphicon glyphicon-arrow-right",
+      error: "glyphicon glyphicon-warning-sign",
+      expanderClosed: "glyphicon glyphicon-menu-right",
+      expanderLazy: "glyphicon glyphicon-menu-right",  // glyphicon-plus-sign
+      expanderOpen: "glyphicon glyphicon-menu-down",  // glyphicon-collapse-down
+      folder: "glyphicon glyphicon-folder-close",
+      folderOpen: "glyphicon glyphicon-folder-open",
+      loading: "glyphicon glyphicon-refresh glyphicon-spin"
+    }
+  };
+
+  $(function(){	
+	$("#tree").fancytree({
+      extensions: ["glyph", "table"],
+      glyph: glyph_opts,
+      source: {url: "${rc.contextPath}/tree/data.html", debugDelay: 200},
+      lazyLoad: function(event, data) {
+	  	var node = data.node;
+      	data.result = {
+          url: "${rc.contextPath}/tree/data.html",
+          data: {key: node.key},
+		  debugDelay: 200
+        }
+      }
+    });	
+  });
+  
+  $("#btnExpand").on("click", function(event) {
+    var tree = $("#tree").fancytree("getTree");
+    tree.visit(function(node){
+      node.setExpanded(true);
+    });
+  });
+  
+  $("#btncollapse").on("click", function(event) {
+    var tree = $("#tree").fancytree("getTree");
+    tree.visit(function(node){
+      node.setExpanded(false);
+    });
+  });
+  
+  $("#btnUpdate").on("click", function(event) {
+    var tree = $("#tree").fancytree("getTree");
+    tree.visit(function(node){
+      node.setExpanded(false);
+    });
+  });
+  
+</script>

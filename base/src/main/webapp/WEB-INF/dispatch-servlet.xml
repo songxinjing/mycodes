@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans  
+		classpath:/org/springframework/beans/factory/xml/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/mvc 
+		classpath:/org/springframework/web/servlet/config/spring-mvc-4.2.xsd
+		http://www.springframework.org/schema/context 
+		classpath:/org/springframework/context/config/spring-context-4.2.xsd"
+	default-lazy-init="false">
+
+	<context:component-scan base-package="com.songxinjing.base.controller" />
+
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<!-- 配置Fastjson支持 -->
+			<bean
+				class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+				<property name="supportedMediaTypes" value="text/html;charset=UTF-8" />
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<mvc:resources mapping="/resources/**" location="/resources/"
+		cache-period="86400" />
+
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<bean class="com.songxinjing.base.interceptor.GlobalInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	<bean class="org.springframework.web.servlet.mvc.WebContentInterceptor"
+		p:cacheSeconds="0" p:alwaysUseFullPath="true">
+		<property name="cacheMappings">
+			<props>
+				<!-- cache for one month -->
+				<prop key="/**/*.html">-1</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="velocityConfigurer"
+		class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+		<!-- 页面文件的路径,相对于webapp -->
+		<property name="resourceLoaderPath">
+			<value>views</value>
+		</property>
+
+		<!-- Velocity属性配置 -->
+		<property name="velocityProperties">
+			<props>
+				<prop key="file.resource.loader.cache">true</prop>
+				<prop key="file.resource.loader.modificationCheckInterval">2</prop>
+				<prop key="input.encoding">UTF-8</prop>
+				<prop key="output.encoding">UTF-8</prop>
+				<prop key="contentType">text/html;charset=UTF-8</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.velocity.VelocityLayoutViewResolver">
+		<!--是否缓存模板 -->
+		<property name="cache" value="false" />
+		<property name="prefix" value="" />
+		<property name="suffix" value=".vm" />
+		<property name="contentType" value="text/html;charset=UTF-8" />
+		<!--是否使用spring对宏定义的支持 -->
+		<property name="exposeSpringMacroHelpers" value="true" />
+		<!--是否开放request属性 -->
+		<property name="exposeRequestAttributes" value="true" />
+		<!--request属性引用名称 -->
+		<property name="requestContextAttribute" value="rc" />
+		<!--是否开放session属性 -->
+		<property name="exposeSessionAttributes" value="true" />
+		<!--允许session覆盖旧值 -->
+		<property name="allowSessionOverride" value="true" />
+		<!--允许request覆盖旧值 -->
+		<property name="allowRequestOverride" value="true" />
+		<!--指定layout文件 -->
+		<property name="layoutUrl" value="layout/default.vm" />
+	</bean>
+
+</beans>
