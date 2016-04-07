@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans 
+	classpath:/org/springframework/beans/factory/xml/spring-beans-4.2.xsd 
+	http://www.springframework.org/schema/aop 
+	classpath:/org/springframework/aop/config/spring-aop-4.2.xsd
+	http://www.springframework.org/schema/context
+	classpath:/org/springframework/context/config/spring-context-4.2.xsd
+	http://www.springframework.org/schema/tx
+	classpath:/org/springframework/transaction/config/spring-tx-4.2.xsd ">
+
+	<!-- 扫描有注解的文件 base-package 包路径 -->
+	<context:component-scan base-package="com.songxinjing.base" />
+
+	<!-- 引入数据库配置properties文件 -->
+	<context:property-placeholder location="classpath:dbConfig.properties" />
+
+	<!-- 定义数据库连接池数据源bean -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<!-- 设置JDBC驱动名称 -->
+		<property name="driverClass" value="${db.driver}" />
+		<!-- 设置JDBC连接URL -->
+		<property name="jdbcUrl" value="${db.url}" />
+		<!-- 设置数据库用户名 -->
+		<property name="user" value="${db.user}" />
+		<!-- 设置数据库密码 -->
+		<property name="password" value="${db.pwd}" />
+		<!-- 设置连接池初始值 -->
+		<property name="initialPoolSize" value="5" />
+	</bean>
+
+	<!-- 配置sessionFactory -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<!-- 数据源 -->
+		<property name="dataSource" ref="dataSource" />
+		<!-- hibernate的相关属性配置 -->
+		<property name="hibernateProperties">
+			<value>
+				<!-- 设置数据库方言 -->
+				hibernate.dialect=org.hibernate.dialect.MySQLDialect
+				<!-- 设置自动创建|更新|验证数据库表结构 -->
+				hibernate.hbm2ddl.auto=update
+				<!-- 是否在控制台显示sql -->
+				hibernate.show_sql=true
+				<!-- 是否格式化sql，优化显示 -->
+				hibernate.format_sql=true
+				<!-- 是否开启二级缓存 -->
+				hibernate.cache.use_second_level_cache=false
+				<!-- 是否开启查询缓存 -->
+				hibernate.cache.use_query_cache=false
+				<!-- 数据库批量查询最大数 -->
+				hibernate.jdbc.fetch_size=50
+				<!-- 数据库批量更新、添加、删除操作最大数 -->
+				hibernate.jdbc.batch_size=50
+				<!-- 是否自动提交事务 -->
+				hibernate.connection.autocommit=true
+				<!-- 指定hibernate在何时释放JDBC连接 -->
+				hibernate.connection.release_mode=auto
+				<!-- 创建session方式 hibernate5.x 的方式 -->
+				hibernate.current_session_context_class=org.springframework.orm.hibernate5.SpringSessionContext
+				<!-- 默认情况下是auto的， 不设置的话会自动去classpath下面找一个bean-validation**包，所以把它设置为none即可 -->
+				javax.persistence.validation.mode=none
+			</value>
+		</property>
+		<!-- 自动扫描实体对象的包结构中存放实体类 -->
+		<property name="packagesToScan" value="com.songxinjing.base.domain" />
+	</bean>
+
+	<!-- 定义事务管理 -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<!-- 事务执行方式 REQUIRED：指定当前方法必需在事务环境中运行， 如果当前有事务环境就加入当前正在执行的事务环境， 如果当前没有事务，就新建一个事务。 
+				这是默认值。 -->
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+			<!-- 指定当前方法以非事务方式执行操作，如果当前存在事务，就把当前事务挂起，等我以非事务的状态运行完，再继续原来的事务。 查询定义即可 
+				read-only="true" 表示只读 -->
+			<tx:method name="*" propagation="NOT_SUPPORTED" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- 定义切面，在service包或子包中的任意方法执行有关的hibernate session的事务操作 -->
+	<aop:config>
+		<aop:pointcut id="serviceOperation"
+			expression="execution(* com.songxinjing.base.service..*.*(..))" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation" />
+	</aop:config>
+
+</beans>

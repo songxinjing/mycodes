@@ -1,0 +1,127 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <button id="btnExpandAll" class="btn btn-xs btn-primary">全部展开</button>
+      <button id="btncollapseAll" class="btn btn-xs btn-warning">全部收缩</button>
+    </div>
+    <div id="tree">
+    </div>
+    <div class="panel-footer">
+      <b></b>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <table id="treetable" class="table table-condensed table-hover table-striped fancytree-fade-expander">
+    <colgroup>
+      <col width="80px"></col>
+      <col width="30px"></col>
+      <col width="*"></col>
+      <col width="100px"></col>
+      <col width="100px"></col>
+      <col width="100px"></col>
+    </colgroup>
+    <thead>
+      <tr> 
+		<th></th>
+		<th></th>
+		<th>可选业务列表</th>
+		<th>Folder</th>
+		<th></th>
+		<th></th>
+	  </tr>
+    </thead>
+    <tbody>
+      <tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	  </tr>
+    </tbody>
+  </table>
+</div>
+
+<script src="//cdn.bootcss.com/jquery.fancytree/2.15.0/jquery.fancytree-all.min.js"></script>
+<script type="text/javascript"> 
+  glyph_opts = {
+    map: {
+      doc: "glyphicon glyphicon-file",
+      docOpen: "glyphicon glyphicon-file",
+      checkbox: "glyphicon glyphicon-unchecked",
+      checkboxSelected: "glyphicon glyphicon-check",
+      checkboxUnknown: "glyphicon glyphicon-share",
+      dragHelper: "glyphicon glyphicon-play",
+      dropMarker: "glyphicon glyphicon-arrow-right",
+      error: "glyphicon glyphicon-warning-sign",
+      expanderClosed: "glyphicon glyphicon-menu-right",
+      expanderLazy: "glyphicon glyphicon-menu-right",  // glyphicon-plus-sign
+      expanderOpen: "glyphicon glyphicon-menu-down",  // glyphicon-collapse-down
+      folder: "glyphicon glyphicon-folder-close",
+      folderOpen: "glyphicon glyphicon-folder-open",
+      loading: "glyphicon glyphicon-refresh glyphicon-spin"
+    }
+  };
+
+  $(function(){
+  
+    $("#tree").fancytree({
+	  extensions: ["glyph"],
+	  glyph: glyph_opts,
+	  // checkbox: true,
+	  // selectMode: 2, // 1:single, 2:multi, 3:multi-hier (default: 2)
+      source: {url: "data.html", debugDelay: 200},
+      lazyLoad: function(event, data) {
+	  	var node = data.node;
+      	data.result = {
+          url: "data.html",
+          data: {key: node.key},
+		  debugDelay: 200
+        }
+      }
+    });
+	
+	$("#treetable").fancytree({
+      extensions: ["dnd", "edit", "glyph", "table"],
+      checkbox: true,
+	  selectMode: 3,
+      dnd: {
+        focusOnClick: true,
+        dragStart: function(node, data) { return true; },
+        dragEnter: function(node, data) { return true; },
+        dragDrop: function(node, data) { data.otherNode.copyTo(node, data.hitMode); }
+      },
+      glyph: glyph_opts,
+      source: {url: "data.html", debugDelay: 200},
+      table: {
+        checkboxColumnIdx: 1,
+        nodeColumnIdx: 2
+      },
+      lazyLoad: function(event, data) {
+	  	var node = data.node;
+      	data.result = {
+          url: "data.html",
+          data: {key: node.key},
+		  debugDelay: 200
+        }
+      }
+    });
+	
+  });
+  
+  $("#btnExpandAll").on("click", function(event) {
+    var tree = $("#tree").fancytree("getTree");
+    tree.visit(function(node){
+      node.setExpanded(true);
+    });
+  });
+  
+  $("#btncollapseAll").on("click", function(event) {
+    var tree = $("#tree").fancytree("getTree");
+    tree.visit(function(node){
+      node.setExpanded(false);
+    });
+  });
+  
+</script>
