@@ -29,10 +29,10 @@ public class TreeNodeController {
 	private static Logger logger = LogManager.getLogger(TreeNodeController.class);
 
 	@Autowired
-	TreeNodeService treeService;
+	TreeNodeService treeNodeService;
 
 	@RequestMapping(value = { ViewPath.TREE_INDEX }, method = RequestMethod.GET)
-	public String tree(Model model, HttpServletRequest request) {
+	public String index(Model model, HttpServletRequest request) {
 		logger.info("进入Tree页面");
 		return ViewPath.TREE_INDEX;
 	}
@@ -44,7 +44,13 @@ public class TreeNodeController {
 		if (key == null) {
 			key = 0;
 		}
-		return treeService.findChildrenForm(key, false);
+		return treeNodeService.findChildrenForm(key, false);
+	}
+	
+	@RequestMapping(value = { ViewPath.TREE_EDIT }, method = RequestMethod.GET)
+	public String edit(Model model, HttpServletRequest request) {
+		logger.info("进入Tree编辑页面");
+		return ViewPath.TREE_EDIT;
 	}
 
 }

@@ -23,8 +23,13 @@ public class ViewPath {
 	public static final String TREE_INDEX = "tree/index";
 	
 	/**
-	 * tree页面
+	 * tree数据
 	 */
 	public static final String TREE_DATA = "tree/data";
+	
+	/**
+	 * tree编辑页面
+	 */
+	public static final String TREE_EDIT = "tree/edit";
 	
 }

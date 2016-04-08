@@ -20,7 +20,7 @@ import com.songxinjing.base.form.TreeNodeForm;
 public class TreeNodeService {
 
 	@Autowired
-	TreeNodeDao treeDao;
+	TreeNodeDao treeNodeDao;
 
 	/**
 	 * 获取父节点下的所有子节点（按顺序）
@@ -30,7 +30,7 @@ public class TreeNodeService {
 	 * @return 所有子节点List
 	 */
 	public List<TreeNode> findChildren(int parentId) {
-		return treeDao.findChildren(parentId);
+		return treeNodeDao.findChildren(parentId);
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class TreeNodeService {
 			TreeNodeForm nodeForm = new TreeNodeForm();
 			nodeForm.setKey(node.getNodeId());
 			nodeForm.setTitle(node.getNodeName());
-			List<TreeNode> childNodes = treeDao.findChildren(node.getNodeId());
+			List<TreeNode> childNodes = treeNodeDao.findChildren(node.getNodeId());
 			if (childNodes.size() > 0) {
 				nodeForm.setFolder(true);
 				if (isRecursion) {
