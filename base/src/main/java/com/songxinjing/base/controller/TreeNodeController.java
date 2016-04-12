@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.songxinjing.base.constant.DataDick;
 import com.songxinjing.base.constant.ViewPath;
+import com.songxinjing.base.domain.TreeNode;
 import com.songxinjing.base.form.TreeNodeForm;
 import com.songxinjing.base.service.TreeNodeService;
 
@@ -46,11 +48,47 @@ public class TreeNodeController {
 		}
 		return treeNodeService.findChildrenForm(key, false);
 	}
-	
+
 	@RequestMapping(value = { ViewPath.TREE_EDIT }, method = RequestMethod.GET)
 	public String edit(Model model, HttpServletRequest request) {
 		logger.info("进入Tree编辑页面");
 		return ViewPath.TREE_EDIT;
+	}
+
+	@RequestMapping(value = { ViewPath.TREE_SAVE }, method = RequestMethod.POST)
+	@ResponseBody
+	public boolean save(Model model, HttpServletRequest request, Integer key, String type, String nodeName) {
+		logger.info("保存Tree的数据");
+		if (type == null || key == null || "".equals(nodeName)) {
+			return false;
+		}
+		if ("A".equals(type)) { // 新增
+			TreeNode treeNode = new TreeNode();
+			treeNode.setNodeName(nodeName);
+			treeNode.setParentId(key);
+			treeNode.setOrderNum(treeNodeService.genOrderNum(key));
+			treeNode.setState(DataDick.RECODE_NORMAL);
+			treeNodeService.save(treeNode);
+			return true;
+		}
+		if ("U".equals(type)) { // 修改
+			TreeNode treeNode = treeNodeService.find(key);
+			treeNode.setNodeName(nodeName);
+			treeNodeService.update(treeNode);
+			return true;
+		}
+		return false;
+	}
+
+	@RequestMapping(value = { ViewPath.TREE_DEL }, method = RequestMethod.POST)
+	@ResponseBody
+	public boolean del(Model model, HttpServletRequest request, Integer key) {
+		logger.info("获取Tree的数据");
+		if (key == null) {
+			return false;
+		}
+		treeNodeService.delete(key);
+		return true;
 	}
 
 }

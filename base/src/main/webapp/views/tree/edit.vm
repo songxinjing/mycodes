@@ -3,13 +3,13 @@
 <div class="panel panel-default">
 	<div class="panel-heading">
       <button id="btnExpand" class="btn btn-primary">展开</button>
-      <button id="btncollapse" class="btn btn-warning">收缩</button>
+      <button id="btncollapse" class="btn btn-primary">收缩</button>
     </div>
 	<div class="div-tree">
       <table id="tree" class="table table-condensed table-hover table-striped fancytree-fade-expander">
         <colgroup>
-          <col width="300px"></col>
-          <col width="*"></col>
+          <col width="50%"></col>
+          <col width="50%"></col>
         </colgroup>
 		<thead>
             <tr> 
@@ -20,11 +20,7 @@
 		<tbody>
     		<tr>
         		<td></td>
-        		<td>
-					<button id="btnAddChild" class="btn btn-sm btn-primary">新增子节点</button>
-					<button id="btnUpdate" class="btn btn-sm btn-warning">修改</button>
-					<button id="btnDelete" class="btn btn-sm btn-danger">删除</button>
-				</td>
+        		<td></td>
     	    </tr>
 		</tbody>
       </table>
@@ -34,8 +30,44 @@
     </div>	
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="modalLabel">新增一个子节点</h4>
+      </div>
+      <div class="modal-body">
+        <form id="nodeForm">
+		  <input type="hidden" id="key">
+		  <input type="hidden" id="type">
+          <div class="form-group">
+            <label for="nodeName">节点名称</label>
+            <input type="text" class="form-control" id="nodeName" placeholder="请输入节点名称">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="btnNodeSave">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="alert-success" class="alert alert-success alert-dismissible fade in hidden" role="alert" aria-hidden="true">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+  <strong>操作成功!</strong>
+</div>
+<div id="alert-danger" class="alert alert-danger alert-dismissible fade in hidden" role="alert" aria-hidden="true">
+<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+  <strong>操作失败!</strong>
+  <p id="errorReason"></p>
+</div>
+
 <script src="//cdn.bootcss.com/jquery.fancytree/2.15.0/jquery.fancytree-all.min.js"></script>
-<script type="text/javascript"> 
+<script> 
   glyph_opts = {
     map: {
       doc: "glyphicon glyphicon-file",
@@ -67,29 +99,107 @@
           data: {key: node.key},
 		  debugDelay: 200
         }
-      }
+      },
+	  renderColumns: function(event, data) {
+	    var node = data.node;
+        $tdList = $(node.tr).find("td");
+		var htmlString = new String("");       
+		// 用+号连接字符串，velocity会抛异常
+		htmlString = htmlString.concat("<button class='btn btn-sm btn-primary' data-toggle='modal' data-target='#modal' data-key='", node.key, "' data-type='A'>新增子节点</button>\n");
+		htmlString = htmlString.concat("<button class='btn btn-sm btn-warning' data-toggle='modal' data-target='#modal' data-key='", node.key, "' data-title='", node.title, "' data-type='U'>修改</button>\n");
+		htmlString = htmlString.concat("<button class='btn btn-sm btn-danger' onclick='nodeDel(", node.key, ")'>删除</button>");
+		$tdList.eq(1).html(htmlString);
+	  }
     });	
   });
   
-  $("#btnExpand").on("click", function(event) {
+  $("#btnExpand").on("click", function() {
     var tree = $("#tree").fancytree("getTree");
     tree.visit(function(node){
       node.setExpanded(true);
     });
   });
   
-  $("#btncollapse").on("click", function(event) {
+  $("#btncollapse").on("click", function() {
     var tree = $("#tree").fancytree("getTree");
     tree.visit(function(node){
       node.setExpanded(false);
     });
   });
   
-  $("#btnUpdate").on("click", function(event) {
-    var tree = $("#tree").fancytree("getTree");
-    tree.visit(function(node){
-      node.setExpanded(false);
+  function nodeDel(key) {
+    var node = $("#tree").fancytree("getTree").getNodeByKey(key.toString());
+	if(node.lazy){
+		alert("该节点有子节点，不能删除");
+		return;
+	}	
+	$.ajax({
+      type: "post", 
+      url: "${rc.contextPath}/tree/del.html",
+	  async: false,
+      data: {
+        "key": key
+      },
+      success: function(data) {
+	    node.remove();
+		$("#alert-success").attr("class","alert alert-success alert-dismissible fade in");
+      },
+	  error: function() {
+        $("#alert-danger").attr("class","alert alert-danger alert-dismissible fade in");
+      }
     });
-  });
+	
+	
+  }
   
+  
+  $("#modal").on("show.bs.modal", function(event) {
+    var button = $(event.relatedTarget);
+    var key = button.data("key");
+	var type = button.data("type");
+	$(this).find("#key").val(key);
+	$(this).find("#type").val(type);
+	if(type == "U"){
+	  var title = button.data("title");
+	  $(this).find("#nodeName").val(title);
+	} else {
+	  $(this).find("#nodeName").val("");
+	}	
+  });
+    
+  $("#btnNodeSave").on("click", function() {  
+    var key = $("#key").val();
+    var type = $("#type").val();
+    var nodeName = $("#nodeName").val();
+    $.ajax({
+      type: "post", 
+      url: "${rc.contextPath}/tree/save.html",
+	  async: false,
+      data: {
+        "key": key,
+        "type": type,
+		"nodeName": nodeName
+      },
+      success: function(data) {
+	  	$("#nodeName").val("");
+		$("#modal").modal('hide');
+        var node = $("#tree").fancytree("getTree").getNodeByKey(key);
+		if(type == "A"){
+		  node.folder = true;
+		  node.lazy = true;
+		  node.setExpanded(false);
+		  node.setExpanded(true);
+		}
+		if(type == "U"){
+		  node.setTitle(nodeName);
+		}
+		$("#alert-success").attr("class","alert alert-success alert-dismissible fade in");
+      },
+	  error: function() {
+	    $("#nodeName").val("");
+		$("#modal").modal('hide');
+        $("#alert-danger").attr("class","alert alert-danger alert-dismissible fade in");
+      }
+    });
+  })
 </script>

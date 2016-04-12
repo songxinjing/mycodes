@@ -23,7 +23,7 @@ public class ViewPath {
 	public static final String TREE_INDEX = "tree/index";
 	
 	/**
-	 * tree数据
+	 * tree数据获取
 	 */
 	public static final String TREE_DATA = "tree/data";
 	
@@ -31,5 +31,15 @@ public class ViewPath {
 	 * tree编辑页面
 	 */
 	public static final String TREE_EDIT = "tree/edit";
+	
+	/**
+	 * tree节点保存
+	 */
+	public static final String TREE_SAVE = "tree/save";
+	
+	/**
+	 * tree节点删除
+	 */
+	public static final String TREE_DEL = "tree/del";
 	
 }

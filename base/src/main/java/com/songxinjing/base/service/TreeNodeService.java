@@ -23,6 +23,60 @@ public class TreeNodeService {
 	TreeNodeDao treeNodeDao;
 
 	/**
+	 * 根据节点ID获取节点对象
+	 * 
+	 * @param nodeId
+	 *            节点ID
+	 * 
+	 * @return TreeNode节点对象
+	 */
+	public TreeNode find(int nodeId) {
+		return treeNodeDao.findByPK(nodeId);
+	}
+
+	/**
+	 * 根据节点ID删除节点对象
+	 * 
+	 * @param nodeId
+	 *            节点ID
+	 */
+	public void delete(int nodeId) {
+		treeNodeDao.delete(nodeId);
+	}
+
+	/**
+	 * 根据节点对象更新数据库
+	 * 
+	 * @param treeNode
+	 *            节点对象
+	 */
+	public void update(TreeNode treeNode) {
+		treeNodeDao.update(treeNode);
+	}
+
+	/**
+	 * 保存新节点
+	 * 
+	 * @param treeNode
+	 * 
+	 * @return nodeId
+	 */
+	public int save(TreeNode treeNode) {
+		return (Integer) treeNodeDao.save(treeNode);
+	}
+
+	/**
+	 * 生成同级排序序号
+	 * 
+	 * @param parentId
+	 *            指定的父节点
+	 * @return 同级排序序号
+	 */
+	public int genOrderNum(int parentId) {
+		return treeNodeDao.findMaxOrderNum(parentId) + 1;
+	}
+
+	/**
 	 * 获取父节点下的所有子节点（按顺序）
 	 * 
 	 * @param parentId

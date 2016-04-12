@@ -13,4 +13,14 @@ public class DataDick {
 	 */
 	public static final int CONFIG_NOT_ENABLE = 0;
 	
+	/**
+	 * 记录状态：正常
+	 */
+	public static final int RECODE_NORMAL = 0;
+	
+	/**
+	 * 记录状态：逻辑删除
+	 */
+	public static final int RECODE_DELETE = 1;
+	
 }

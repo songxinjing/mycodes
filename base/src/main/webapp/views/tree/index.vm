@@ -3,7 +3,7 @@
 <div class="panel panel-default">
     <div class="panel-heading">
       <button id="btnExpand" class="btn btn-primary">展开</button>
-      <button id="btncollapse" class="btn btn-warning">收缩</button>
+      <button id="btncollapse" class="btn btn-primary">收缩</button>
 	  <button id="btnEdit" class="btn btn-warning">维护</button>
     </div>
     <div id="tree" class="div-tree">
@@ -14,7 +14,7 @@
 </div>
 
 <script src="//cdn.bootcss.com/jquery.fancytree/2.15.0/jquery.fancytree-all.min.js"></script>
-<script type="text/javascript"> 
+<script> 
   glyph_opts = {
     map: {
       doc: "glyphicon glyphicon-file",
