@@ -130,4 +130,26 @@ public class TreeNodeService {
 		return nodeForms;
 	}
 
+	/**
+	 * 获取当前节点的上一个同级节点
+	 * 
+	 * @param node
+	 *            当前节点
+	 * @return 上一个同级节点，没有则返回null
+	 */
+	public TreeNode findPreNode(TreeNode node) {
+		return treeNodeDao.findPreNode(node);
+	}
+
+	/**
+	 * 获取当前节点的下一个同级节点
+	 * 
+	 * @param node
+	 *            当前节点
+	 * @return 下一个同级节点，没有则返回null
+	 */
+	public TreeNode findNextNode(TreeNode node) {
+		return treeNodeDao.findNextNode(node);
+	}
+
 }

@@ -42,4 +42,14 @@ public class ViewPath {
 	 */
 	public static final String TREE_DEL = "tree/del";
 	
+	/**
+	 * tree获取子节点列表
+	 */
+	public static final String TREE_CHILDLIST = "tree/childlist";
+	
+	/**
+	 * tree调整子节点顺序
+	 */
+	public static final String TREE_UPDOWN = "tree/updown";
+	
 }

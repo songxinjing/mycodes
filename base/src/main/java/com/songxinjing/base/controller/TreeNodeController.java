@@ -83,11 +83,53 @@ public class TreeNodeController {
 	@RequestMapping(value = { ViewPath.TREE_DEL }, method = RequestMethod.POST)
 	@ResponseBody
 	public boolean del(Model model, HttpServletRequest request, Integer key) {
-		logger.info("获取Tree的数据");
+		logger.info("删除节点");
 		if (key == null) {
 			return false;
 		}
 		treeNodeService.delete(key);
+		return true;
+	}
+	
+	@RequestMapping(value = { ViewPath.TREE_CHILDLIST }, method = RequestMethod.POST)
+	@ResponseBody
+	public List<TreeNode> childList(Model model, HttpServletRequest request, Integer key) {
+		logger.info("获取子节点数据");
+		if (key == null) {
+			return null;
+		}
+		return treeNodeService.findChildren(key);
+	}
+	
+	@RequestMapping(value = { ViewPath.TREE_UPDOWN }, method = RequestMethod.POST)
+	@ResponseBody
+	public boolean upDown(Model model, HttpServletRequest request, Integer nodeId, String type) {
+		logger.info("调整子节点顺利");
+		if (type == null || nodeId == null || "".equals(type)) {
+			return false;
+		}
+		TreeNode node = treeNodeService.find(nodeId);
+		int orderNum = node.getOrderNum();
+		if("up".equals(type)){
+			TreeNode preNode = treeNodeService.findPreNode(node);
+			if(preNode == null){
+				return false;
+			}
+			node.setOrderNum(preNode.getOrderNum());
+			preNode.setOrderNum(orderNum);			
+			treeNodeService.update(preNode);
+		} else if("down".equals(type)){
+			TreeNode nextNode = treeNodeService.findNextNode(node);	
+			if(nextNode == null){
+				return false;
+			}
+			node.setOrderNum(nextNode.getOrderNum());
+			nextNode.setOrderNum(orderNum);
+			treeNodeService.update(nextNode);
+		} else {
+			return false;
+		}		
+		treeNodeService.update(node);		
 		return true;
 	}
 

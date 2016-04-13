@@ -36,7 +36,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="modalLabel">新增一个子节点</h4>
+        <h4 class="modal-title" id="modalLabel"></h4>
       </div>
       <div class="modal-body">
         <form id="nodeForm">
@@ -51,6 +51,34 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
         <button type="button" class="btn btn-primary" id="btnNodeSave">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- childlistModal -->
+<div class="modal fade" id="childlistModal" tabindex="-1" role="dialog" aria-labelledby="childlistModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="childlistModalLabel"></h4>
+      </div>
+      <div class="modal-body">
+		<input type="hidden" id="parentKey">
+		<table class="table table-bordered" id="tblChildlist">
+		  <thead>
+			<tr>
+			  <th>节点名称</th>
+              <th>操作</th>
+            </tr>
+		  </thead>
+		  <tbody>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
       </div>
     </div>
   </div>
@@ -105,7 +133,8 @@
         $tdList = $(node.tr).find("td");
 		var htmlString = new String("");       
 		// 用+号连接字符串，velocity会抛异常
-		htmlString = htmlString.concat("<button class='btn btn-sm btn-primary' data-toggle='modal' data-target='#modal' data-key='", node.key, "' data-type='A'>新增子节点</button>\n");
+		htmlString = htmlString.concat("<button class='btn btn-sm btn-success' data-toggle='modal' data-target='#modal' data-key='", node.key, "' data-type='A'>新增子节点</button>\n");
+		htmlString = htmlString.concat("<button class='btn btn-sm btn-info' data-toggle='modal' data-target='#childlistModal' data-key='", node.key, "' data-title='", node.title, "'>调整子节点顺序</button>\n");
 		htmlString = htmlString.concat("<button class='btn btn-sm btn-warning' data-toggle='modal' data-target='#modal' data-key='", node.key, "' data-title='", node.title, "' data-type='U'>修改</button>\n");
 		htmlString = htmlString.concat("<button class='btn btn-sm btn-danger' onclick='nodeDel(", node.key, ")'>删除</button>");
 		$tdList.eq(1).html(htmlString);
@@ -129,7 +158,7 @@
   
   function nodeDel(key) {
     var node = $("#tree").fancytree("getTree").getNodeByKey(key.toString());
-	if(node.lazy){
+	if(node.folder){
 		alert("该节点有子节点，不能删除");
 		return;
 	}	
@@ -141,17 +170,20 @@
         "key": key
       },
       success: function(data) {
+	    var parent = node.parent;
 	    node.remove();
+		if(!parent.hasChildren()){
+		  parent.folder = false;
+		  parent.lazy = false;
+		  parent.setActive();
+		}
 		$("#alert-success").attr("class","alert alert-success alert-dismissible fade in");
       },
 	  error: function() {
         $("#alert-danger").attr("class","alert alert-danger alert-dismissible fade in");
       }
-    });
-	
-	
-  }
-  
+    });	
+  } 
   
   $("#modal").on("show.bs.modal", function(event) {
     var button = $(event.relatedTarget);
@@ -162,9 +194,57 @@
 	if(type == "U"){
 	  var title = button.data("title");
 	  $(this).find("#nodeName").val(title);
+	  $(this).find("#modalLabel").text("修改节点信息");
 	} else {
 	  $(this).find("#nodeName").val("");
+	  $(this).find("#modalLabel").text("新增一个子节点");
 	}	
+  });
+   
+  $("#childlistModal").on("hidden.bs.modal", function(event) {
+    var key = $("#parentKey").val();
+  	var node = $("#tree").fancytree("getTree").getNodeByKey(key.toString());
+    node.resetLazy();
+    node.setExpanded();
+  });
+  
+  $("#childlistModal").on("show.bs.modal", function(event) {
+    $("#tblChildlist tbody").empty();
+    var button = $(event.relatedTarget);
+    var key = button.data("key");
+	var title = button.data("title");
+	var titleModal = new String(""); 
+	titleModal = titleModal.concat(title, " - 子节点列表");
+	$(this).find("#childlistModalLabel").text(titleModal);	
+	$(this).find("#parentKey").val(key);
+	$.ajax({
+      type: "post", 
+      url: "${rc.contextPath}/tree/childlist.html",
+	  async: false,
+      data: {
+        "key": key
+      },
+      success: function(data) {
+	    var json = JSON.parse(data);
+	  	$.each(json, function(idx, node) {
+		  var newRow = new String("");       
+		  // 用+号连接字符串，velocity会抛异常
+		  newRow = newRow.concat("<tr id='row_", node.nodeId, "'><td>", node.nodeName ,"</td><td>");
+		  if(idx != 0){
+		    newRow = newRow.concat("<button class='btn btn-sm btn-info' onclick='nodeUpDown(", node.nodeId, ",\"up\")'>上移</button>\n");
+		  }
+		  if(idx < json.length - 1){
+		    newRow = newRow.concat("<button class='btn btn-sm btn-info' onclick='nodeUpDown(", node.nodeId, ",\"down\")'>下移</button>\n");
+		  }
+		  newRow = newRow.concat("</td></tr>");
+		  $("#tblChildlist tbody").append(newRow);
+		});
+      },
+	  error: function() {
+	   
+      }
+    });
+	
   });
     
   $("#btnNodeSave").on("click", function() {  
@@ -187,8 +267,8 @@
 		if(type == "A"){
 		  node.folder = true;
 		  node.lazy = true;
-		  node.setExpanded(false);
-		  node.setExpanded(true);
+		  node.resetLazy();
+		  node.setExpanded();
 		}
 		if(type == "U"){
 		  node.setTitle(nodeName);
@@ -202,4 +282,69 @@
       }
     });
   })
+  
+  function nodeUpDown(nodeId, type) {
+    $.ajax({
+      type: "post", 
+      url: "${rc.contextPath}/tree/updown.html",
+	  async: false,
+      data: {
+        "nodeId": nodeId,
+        "type": type,
+      },
+      success: function(data) {
+	  	var row=$("#row_"+nodeId); 
+		if(type == "up"){
+		  var prevRow=row.prev(); 
+		  if(prevRow.length>0){
+		    // 第二个上移
+		    if(prevRow.prev().length == 0){
+			  var preButtonDown = prevRow.find("button:last");
+			  var buttonUp = row.find("button:first");
+			  buttonUp.insertBefore(preButtonDown); 
+			  var prevRowId = prevRow.attr("id");
+			  var prevNodeId = prevRowId.split("_")[1];
+			  buttonUp.attr("onclick","nodeUpDown("+ prevNodeId + ",'up')");
+			  buttonUp.after("\n");
+			}
+			// 最后一个上移
+			if(row.next().length == 0){
+			  var preButtonDown = prevRow.find("button:last");
+			  var buttonUp = row.find("button:first");
+			  preButtonDown.insertAfter(buttonUp); 
+			  preButtonDown.attr("onclick","nodeUpDown("+ nodeId + ",'down')");
+			  buttonUp.after("\n");
+			}
+		    prevRow.insertAfter(row);
+		  }	       
+		} else if(type == "down"){
+		  var nextRow=row.next(); 
+		  if(nextRow.length>0){
+		    // 第一个下移
+		    if(row.prev().length == 0){
+			  var nextButtonUp = nextRow.find("button:first");
+			  var buttonDown = row.find("button:last");
+			  nextButtonUp.insertBefore(buttonDown);
+			  nextButtonUp.attr("onclick","nodeUpDown("+ nodeId + ",'up')");
+			  nextButtonUp.after("\n"); 
+			}
+			// 倒数第二个下移
+			if(nextRow.next().length == 0){
+			  var nextButtonUp = nextRow.find("button:first");
+			  var buttonDown = row.find("button:last");
+			  buttonDown.insertAfter(nextButtonUp); 
+			  var nextRowId = nextRow.attr("id");
+			  var nextNodeId = nextRowId.split("_")[1];
+			  buttonDown.attr("onclick","nodeUpDown("+ nextNodeId + ",'down')");
+			  nextButtonUp.after("\n");
+			}
+            nextRow.insertBefore(row); 
+		  }
+		}
+      },
+	  error: function() {
+	    
+      }
+    });
+  }
 </script>

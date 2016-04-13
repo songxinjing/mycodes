@@ -39,5 +39,39 @@ public class TreeNodeDao extends BaseDao<TreeNode, Integer> {
 		}
 		return num + 1;
 	}
+	
+	/**
+	 * 获取当前节点的上一个同级节点
+	 * 
+	 * @param node
+	 *            当前节点
+	 * @return 上一个同级节点，没有则返回null
+	 */
+	@SuppressWarnings("unchecked")
+	public TreeNode findPreNode(TreeNode node) {
+		String hql = "from TreeNode where parentId = ? and orderNum < ? order by orderNum desc";
+		List<TreeNode> list = (List<TreeNode>) this.find(hql, node.getParentId(), node.getOrderNum());
+		if (list.size() == 0) {
+			return null;
+		}
+		return list.get(0);
+	}
+
+	/**
+	 * 获取当前节点的下一个同级节点
+	 * 
+	 * @param node
+	 *            当前节点
+	 * @return 下一个同级节点，没有则返回null
+	 */
+	@SuppressWarnings("unchecked")
+	public TreeNode findNextNode(TreeNode node) {
+		String hql = "from TreeNode where parentId = ? and orderNum > ? order by orderNum";
+		List<TreeNode> list = (List<TreeNode>) this.find(hql, node.getParentId(), node.getOrderNum());
+		if (list.size() == 0) {
+			return null;
+		}
+		return list.get(0);
+	}
 
 }
