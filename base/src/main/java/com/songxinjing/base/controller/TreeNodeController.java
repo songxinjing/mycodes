@@ -36,6 +36,7 @@ public class TreeNodeController {
 	@RequestMapping(value = { ViewPath.TREE_INDEX }, method = RequestMethod.GET)
 	public String index(Model model, HttpServletRequest request) {
 		logger.info("进入Tree页面");
+		model.addAttribute("menu", "tree");
 		return ViewPath.TREE_INDEX;
 	}
 
@@ -52,6 +53,7 @@ public class TreeNodeController {
 	@RequestMapping(value = { ViewPath.TREE_EDIT }, method = RequestMethod.GET)
 	public String edit(Model model, HttpServletRequest request) {
 		logger.info("进入Tree编辑页面");
+		model.addAttribute("menu", "tree");
 		return ViewPath.TREE_EDIT;
 	}
 

@@ -25,6 +25,7 @@ public class HomeController {
 	@RequestMapping(value = { ViewPath.INDEX }, method = RequestMethod.GET)
 	public String home(Model model, HttpServletRequest request) {
 		logger.info("进入主页面");
+		model.addAttribute("menu", "index");
 		return ViewPath.INDEX;
 	}
 

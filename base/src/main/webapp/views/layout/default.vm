@@ -17,14 +17,15 @@
     <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
     <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 	<script src="//cdn.bootcss.com/jqueryui/1.11.4/jquery-ui.min.js"></script>
+	<script src="${rc.contextPath}/resources/js/base.js"></script>
   </head>
   <body>	
 	<nav class="navbar navbar-default">
       <div class="container">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="${rc.contextPath}/index.html">首页</a></li>
-            <li><a href="${rc.contextPath}/tree/index.html">树控件</a></li>
-            <li><a href="${rc.contextPath}/page/index.html">分页控件</a></li>
+            <li #if($menu == "index") class="active" #end><a href="${rc.contextPath}/index.html">首页</a></li>
+            <li #if($menu == "tree") class="active" #end><a href="${rc.contextPath}/tree/index.html">树控件</a></li>
+            <li #if($menu == "page") class="active" #end><a href="${rc.contextPath}/page/index.html">分页控件</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">其他 <span class="caret"></span></a>
               <ul class="dropdown-menu">
@@ -57,5 +58,6 @@
       <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+	 #parse("/base/modal.vm")
   </body>
 </html>

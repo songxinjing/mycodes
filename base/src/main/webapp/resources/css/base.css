@@ -4,6 +4,13 @@ div.div-tree {
 }
 
 .container {
-	max-width: 1400px;
-	width: 98%;
+	max-width: 1200px;
+}
+
+th.tree-node {
+	min-width: 220px;
+}
+
+button {
+	margin: 3px;
 }
