@@ -61,7 +61,6 @@
         <h4 class="modal-title" id="childlistModalLabel"></h4>
       </div>
       <div class="modal-body">
-		<input type="hidden" id="parentKey">
 		<table class="table table-bordered" id="tblChildlist">
 		  <thead>
 			<tr>
@@ -147,8 +146,8 @@
   function nodeDel(key) {
     var node = $("#tree").fancytree("getTree").getNodeByKey(key.toString());
 	if(node.folder){
-		base.alert("该节点有子节点，不能删除！");
-		return;
+	  base.alert("该节点有子节点，不能删除！");
+	  return;
 	}	
 	$.ajax({
       type: "post", 
@@ -191,12 +190,17 @@
 	  $(this).find("#modalLabel").text("新增一个子节点");
 	}	
   });
+  
+  var orderParentKey = 0;
+  var orderFlag = false;
    
   $("#childlistModal").on("hidden.bs.modal", function(event) {
-    var key = $("#parentKey").val();
-  	var node = $("#tree").fancytree("getTree").getNodeByKey(key.toString());
-    node.resetLazy();
-    node.setExpanded();
+	if(orderFlag && orderParentKey != 0){
+	  var node = $("#tree").fancytree("getTree").getNodeByKey(orderParentKey.toString());
+      node.resetLazy();
+      node.setExpanded();
+	  orderFlag = false;
+	}
   });
   
   $("#childlistModal").on("show.bs.modal", function(event) {
@@ -207,7 +211,7 @@
 	var titleModal = new String(""); 
 	titleModal = titleModal.concat(title, " - 子节点列表");
 	$(this).find("#childlistModalLabel").text(titleModal);	
-	$(this).find("#parentKey").val(key);
+	orderParentKey = key;
 	$.ajax({
       type: "post", 
       url: "${rc.contextPath}/tree/childlist.html",
@@ -310,6 +314,7 @@
     			  buttonUp.after("\n");
     			}
     		    prevRow.insertAfter(row);
+				orderFlag = true;
     		  }	       
     		} else if(type == "down"){
     		  var nextRow=row.next(); 
@@ -332,7 +337,8 @@
     			  buttonDown.attr("onclick","nodeUpDown("+ nextNodeId + ",'down')");
     			  nextButtonUp.after("\n");
     			}
-                nextRow.insertBefore(row); 
+                nextRow.insertBefore(row);
+				orderFlag = true;
     		  }
     		}
 		} else {
