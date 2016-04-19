@@ -52,4 +52,14 @@ public class ViewPath {
 	 */
 	public static final String TREE_UPDOWN = "tree/updown";
 	
+	/**
+	 * tree保存选中节点
+	 */
+	public static final String TREE_SAVE_SELECTED = "tree/saveSelected";
+	
+	/**
+	 * tree获取选中节点
+	 */
+	public static final String TREE_GET_SELECTED = "tree/getSelected";
+		
 }

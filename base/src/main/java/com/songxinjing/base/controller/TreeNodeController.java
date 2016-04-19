@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.songxinjing.base.constant.DataDick;
 import com.songxinjing.base.constant.ViewPath;
 import com.songxinjing.base.domain.TreeNode;
+import com.songxinjing.base.domain.UserNode;
 import com.songxinjing.base.form.TreeNodeForm;
 import com.songxinjing.base.service.TreeNodeService;
+import com.songxinjing.base.service.UserNodeService;
 
 /**
  * 树型控制类
@@ -32,6 +34,9 @@ public class TreeNodeController {
 
 	@Autowired
 	TreeNodeService treeNodeService;
+	
+	@Autowired
+	UserNodeService userNodeService;
 
 	@RequestMapping(value = { ViewPath.TREE_INDEX }, method = RequestMethod.GET)
 	public String index(Model model, HttpServletRequest request) {
@@ -42,12 +47,15 @@ public class TreeNodeController {
 
 	@RequestMapping(value = { ViewPath.TREE_DATA }, method = RequestMethod.GET)
 	@ResponseBody
-	public List<TreeNodeForm> data(Model model, HttpServletRequest request, Integer key) {
+	public List<TreeNodeForm> data(Model model, HttpServletRequest request, Integer key, Boolean deep) {
 		logger.info("获取Tree的数据");
 		if (key == null) {
 			key = 0;
 		}
-		return treeNodeService.findChildrenForm(key, false);
+		if (deep == null) {
+			deep = false;
+		}		
+		return treeNodeService.findChildrenForm(key, deep);
 	}
 
 	@RequestMapping(value = { ViewPath.TREE_EDIT }, method = RequestMethod.GET)
@@ -55,6 +63,21 @@ public class TreeNodeController {
 		logger.info("进入Tree编辑页面");
 		model.addAttribute("menu", "tree");
 		return ViewPath.TREE_EDIT;
+	}
+	
+	@RequestMapping(value = { ViewPath.TREE_SAVE_SELECTED }, method = RequestMethod.POST)
+	@ResponseBody
+	public boolean saveSelected(Model model, HttpServletRequest request, int[] keys) {
+		logger.info("保存选中节点");
+		userNodeService.saveSelected(keys, "0001");
+		return true;
+	}
+	
+	@RequestMapping(value = { ViewPath.TREE_GET_SELECTED }, method = RequestMethod.POST)
+	@ResponseBody
+	public List<UserNode> getSelected(Model model, HttpServletRequest request) {
+		logger.info("获取选中节点");
+		return userNodeService.findByUserId("0001");
 	}
 
 	@RequestMapping(value = { ViewPath.TREE_SAVE }, method = RequestMethod.POST)

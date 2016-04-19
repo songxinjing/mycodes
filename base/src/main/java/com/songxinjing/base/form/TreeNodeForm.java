@@ -69,4 +69,10 @@ public class TreeNodeForm {
 		this.lazy = lazy;
 	}
 
+	@Override
+	public String toString() {
+		return "TreeNodeForm [key=" + key + ", title=" + title + ", folder=" + folder + ", children=" + children
+				+ ", lazy=" + lazy + "]";
+	}
+
 }

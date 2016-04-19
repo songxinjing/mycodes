@@ -96,9 +96,9 @@ public class TreeNodeService {
 	 *            是否递归遍历
 	 * @return 子节点List
 	 */
-	public List<TreeNodeForm> findChildrenForm(int parentId, boolean isRecursion) {
+	public List<TreeNodeForm> findChildrenForm(int parentId, boolean deep) {
 		List<TreeNode> childNodes = findChildren(parentId);
-		return convert(childNodes, isRecursion);
+		return convert(childNodes, deep);
 	}
 
 	/**
@@ -109,7 +109,7 @@ public class TreeNodeService {
 	 *            是否递归遍历
 	 * @return
 	 */
-	public List<TreeNodeForm> convert(List<TreeNode> nodes, boolean isRecursion) {
+	public List<TreeNodeForm> convert(List<TreeNode> nodes, boolean deep) {
 		List<TreeNodeForm> nodeForms = new ArrayList<TreeNodeForm>();
 		for (TreeNode node : nodes) {
 			TreeNodeForm nodeForm = new TreeNodeForm();
@@ -118,7 +118,7 @@ public class TreeNodeService {
 			List<TreeNode> childNodes = treeNodeDao.findChildren(node.getNodeId());
 			if (childNodes.size() > 0) {
 				nodeForm.setFolder(true);
-				if (isRecursion) {
+				if (deep) {
 					nodeForm.setChildren(convert(childNodes, true));
 				} else {
 					nodeForm.setLazy(true);

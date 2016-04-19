@@ -9,7 +9,7 @@
     <div id="tree" class="div-tree">
     </div>
     <div class="panel-footer">
-      <b></b>
+      <button id="btnSave" class="btn btn-success">保存</button>
     </div>
 </div>
 
@@ -38,38 +38,77 @@
     $("#tree").fancytree({
 	  extensions: ["glyph"],
 	  glyph: glyph_opts,
-	  // checkbox: true,
-	  // selectMode: 2, // 1:single, 2:multi, 3:multi-hier (default: 2)
+	  checkbox: true,
+	  selectMode: 3, // 1:single, 2:multi, 3:multi-hier (default: 2)
 	  autoScroll: true,
-	  quicksearch: true,
-      source: {url: "${rc.contextPath}/tree/data.html", debugDelay: 200},
-      lazyLoad: function(event, data) {
-	  	var node = data.node;
-      	data.result = {
-          url: "${rc.contextPath}/tree/data.html",
-          data: {key: node.key},
-		  debugDelay: 200
-        }
+      source: {url: "${rc.contextPath}/tree/data.html?deep=true"},	
+	  init: function() {
+	  	$.ajax({
+          type: "post", 
+          url: "${rc.contextPath}/tree/getSelected.html",
+    	  async: false,
+          success: function(data) {
+    	  	var json = JSON.parse(data);
+    		var tree = $("#tree").fancytree("getTree");
+    	  	$.each(json, function(idx, userNode) {
+    			tree.getNodeByKey(userNode.nodeId.toString()).setSelected();
+    		});
+			tree.visit(function(node){
+      			node.setExpanded(true);
+    		});
+          },
+    	  error: function() {
+            base.alert("加载选中节点失败！");
+          }
+		}); 
       }
-    });	
+    });		
   });
   
-  $("#btnExpand").on("click", function(event) {
+  $("#btnExpand").on("click", function() {
     var tree = $("#tree").fancytree("getTree");
     tree.visit(function(node){
       node.setExpanded(true);
     });
   });
   
-  $("#btncollapse").on("click", function(event) {
+  $("#btncollapse").on("click", function() {
     var tree = $("#tree").fancytree("getTree");
     tree.visit(function(node){
       node.setExpanded(false);
     });
   });
   
-  $("#btnEdit").on("click", function(event) {
+  $("#btnEdit").on("click", function() {
      location.href = "${rc.contextPath}/tree/edit.html"
   });
+  
+  $("#btnSave").on("click", function() {
+     var tree = $("#tree").fancytree("getTree");
+	 var nodes = tree.getSelectedNodes(true);
+	 var keys = [];	 
+	 for(var i = 0; i < nodes.length; i++){
+	 	keys[i] = nodes[i].key;
+	 }
+	 $.ajax({
+       type: "post", 
+       url: "${rc.contextPath}/tree/saveSelected.html",
+	   async: false,
+	   traditional: true,
+       data: {
+         "keys": keys,
+       },
+      success: function(data) {
+	  	if(data == "true"){
+    	  base.alert("操作成功！");
+		} else {
+		  base.alert("操作失败！");
+		}
+      },
+	  error: function() {
+        base.alert("操作失败！");
+      }
+	 });
+   });
   
 </script>
