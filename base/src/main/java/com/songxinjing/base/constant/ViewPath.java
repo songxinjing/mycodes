@@ -61,5 +61,10 @@ public class ViewPath {
 	 * tree获取选中节点
 	 */
 	public static final String TREE_GET_SELECTED = "tree/getSelected";
+	
+	/**
+	 * 用户列表
+	 */
+	public static final String USER_LIST = "user/list";
 		
 }

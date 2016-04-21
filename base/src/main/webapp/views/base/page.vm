@@ -1,0 +1,43 @@
+#if($!{pageModel})
+	#set($prevPage = $!{pageModel.currPage} - 1 )
+	#set($nextPage = $!{pageModel.currPage} + 1 )
+	
+	<div class="pagination pagination-lg">
+	    #if($!{pageModel.currPage} > 1)
+	        <li><a href="${rc.contextPath}/$!{pageModel.url}?page=1">首页</a></li>
+	        <li><a href="${rc.contextPath}/$!{pageModel.url}?page=$!{prevPage}">上一页</a></li>
+	    #else
+	        <li><a>首页</a></li>
+	        <li><a>上一页</a></li>
+		#end
+		#if($!{pageModel.showPageFrom} != 1)
+            <li><a>...</a></li>
+		#end
+	    #set($showPages = [$!{pageModel.showPageFrom} .. $!{pageModel.showPageTo}])
+	    #foreach($page in $!{showPages}) 
+	        <li #if($!{pageModel.currPage} == $!{page}) class="active" #end><a href="${rc.contextPath}/$!{pageModel.url}?page=$!{page}">$!{page}</a></li>
+	    #end
+	    #if($!{pageModel.showPageTo} != $!{pageModel.pageTotal})
+			<li><a>...</a></li>
+		#end
+	    #if($!{pageModel.currPage} < $!{pageModel.pageTotal})
+	    	<li><a href="${rc.contextPath}/$!{pageModel.url}?page=$!{nextPage}">下一页</a></li>
+	    	<li><a href="${rc.contextPath}/$!{pageModel.url}?page=$!{pageModel.pageTotal}">尾页</a></li>
+	    #else
+	    	<li><a>下一页</a></li>
+	    	<li><a>尾页</a></li>
+		#end
+	        <span>$!{pageModel.currPage}/$!{pageModel.pageTotal}页</span>
+			<span>共$!{pageModel.recTotal}条</span>
+	        <span>跳转到第<input id="inputPage" type="text">页</span>
+			<span><a id="aPageGo">确定</a></span>
+    </div>
+
+#end
+<script>
+  $("#aPageGo").on("click", function() {
+    var page = $("#inputPage").val();
+	window.location.href = "${rc.contextPath}/${pageModel.url}?page=" + page;
+  });
+</script>
+

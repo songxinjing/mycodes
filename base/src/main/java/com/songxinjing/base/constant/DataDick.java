@@ -23,4 +23,12 @@ public class DataDick {
 	 */
 	public static final int RECODE_DELETE = 1;
 	
+	
+	/**
+	 * 分页组件：每页显示数目
+	 */
+	public static final int PAGE_SIZE = 15;
+	
+	
+	
 }

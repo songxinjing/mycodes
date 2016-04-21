@@ -93,6 +93,12 @@ public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSu
 		Assert.hasText(placeHolder);
 		return this.getHibernateTemplate().findByNamedParam(queryString, placeHolder, values);
 	}
+	
+	@Override
+	public List<?> findPage(final String queryString, final int from, final int size, final Object... values) {
+		Assert.hasText(queryString);
+		return createQuery(queryString, values).setFirstResult(from).setMaxResults(size).list();
+	}
 
 	@Override
 	public int updOrDel(final String queryString, final Object... values) {

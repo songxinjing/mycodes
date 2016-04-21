@@ -1,3 +1,6 @@
+/**
+ * 基础组件
+ */
 (function() {
 	var Base = function() {
 		var _alert = function(msg) {

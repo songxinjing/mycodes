@@ -25,7 +25,7 @@
           <ul class="nav navbar-nav">
             <li #if($menu == "index") class="active" #end><a href="${rc.contextPath}/index.html">首页</a></li>
             <li #if($menu == "tree") class="active" #end><a href="${rc.contextPath}/tree/index.html">树控件</a></li>
-            <li #if($menu == "page") class="active" #end><a href="${rc.contextPath}/page/index.html">分页控件</a></li>
+            <li #if($menu == "page") class="active" #end><a href="${rc.contextPath}/user/list.html">分页控件</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">其他 <span class="caret"></span></a>
               <ul class="dropdown-menu">

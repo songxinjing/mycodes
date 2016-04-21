@@ -107,6 +107,21 @@ public interface IBaseDao<T, PK extends Serializable> {
 	public List<?> findIn(final String queryString, String placeHolder, List<?> values);
 	
 	/**
+	 * 按HQL查询指定分页对象列表.
+	 * 
+	 * @param hql
+	 *            预编译的HQL语句
+	 * @param from
+	 *            当前页的第一条记录行号
+	 * @param size
+	 *            每页记录数
+	 * @param values
+	 *            数量可变的参数
+	 */
+	public List<?> findPage(final String queryString, final int from, final int size, final Object... values);
+
+	
+	/**
 	 * 执行一个HQL更新或删除, 使用预编译方式绑定参数.
 	 * 
 	 * @param queryString

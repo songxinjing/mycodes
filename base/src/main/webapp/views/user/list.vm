@@ -1,0 +1,27 @@
+<table class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>账号</th>
+      <th>手机</th>
+      <th>邮箱</th>
+    </tr>
+  </thead>
+  <tbody>
+	#if(!$!{pageModel.recList} || $!{pageModel.recList.size()} == 0)
+		<tr>
+			<td colspan="8">
+				<h3>无数据</h3>
+			</td>
+		</tr>
+	#end 
+	#foreach($rec in $!{pageModel.recList})
+        <tr>
+          <td>$!{rec.userId}</td>
+          <td>$!{rec.phone}</td>
+          <td>$!{rec.email}</td>
+        </tr>
+	#end
+  </tbody>
+</table>
+
+#parse("/base/page.vm")
