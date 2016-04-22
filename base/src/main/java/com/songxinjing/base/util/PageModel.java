@@ -142,7 +142,7 @@ public class PageModel<T> {
 	}
 
 	/**
-	 * 分页初始化 新版从第几页开始
+	 * 分页初始化
 	 * 
 	 * @param page
 	 * @param total
