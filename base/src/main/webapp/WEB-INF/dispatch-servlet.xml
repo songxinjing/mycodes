@@ -28,7 +28,7 @@
 
 	<mvc:interceptors>
 		<mvc:interceptor>
-			<mvc:mapping path="/**" />
+			<mvc:mapping path="/**/*.html" />
 			<bean class="com.songxinjing.base.interceptor.GlobalInterceptor"></bean>
 		</mvc:interceptor>
 	</mvc:interceptors>
