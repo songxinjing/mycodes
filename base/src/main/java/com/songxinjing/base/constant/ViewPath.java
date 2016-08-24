@@ -7,15 +7,28 @@ public class ViewPath {
 	 */
 	public static final String INDEX = "index";
 	
+	
+	
+	/****************************
+	 **      系统模块页面目录                          **
+	 ****************************/
+	public static final String SYSTEM_DIR = "system";
+	
 	/**
-	 * 系统报错页面
+	 * 报错页面
 	 */
-	public static final String SYSTEM_ERROR = "system/error";
+	public static final String SYSTEM_ERROR = SYSTEM_DIR + "/error";
 	
 	/**
 	 * 404页面
 	 */
-	public static final String SYSTEM_404 = "system/404";
+	public static final String SYSTEM_404 = SYSTEM_DIR + "/404";
+	
+	
+	/****************************
+	 **      Tree模块页面目录                  **
+	 ****************************/
+	public static final String TREE_DIR = "tree";
 	
 	/**
 	 * tree页面

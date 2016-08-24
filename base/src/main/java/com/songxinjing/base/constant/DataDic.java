@@ -1,6 +1,6 @@
 package com.songxinjing.base.constant;
 
-public class DataDick {
+public class DataDic {
 	
 	
 	/**

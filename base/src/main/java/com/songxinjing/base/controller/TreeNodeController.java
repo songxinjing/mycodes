@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.songxinjing.base.constant.DataDick;
+import com.songxinjing.base.constant.DataDic;
 import com.songxinjing.base.constant.ViewPath;
 import com.songxinjing.base.domain.TreeNode;
 import com.songxinjing.base.domain.UserNode;
@@ -92,7 +92,7 @@ public class TreeNodeController {
 			treeNode.setNodeName(nodeName);
 			treeNode.setParentId(key);
 			treeNode.setOrderNum(treeNodeService.genOrderNum(key));
-			treeNode.setState(DataDick.RECODE_NORMAL);
+			treeNode.setState(DataDic.RECODE_NORMAL);
 			treeNodeService.save(treeNode);
 			return true;
 		}

@@ -8,7 +8,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.songxinjing.base.constant.DataDick;
+import com.songxinjing.base.constant.DataDic;
 import com.songxinjing.base.domain.Config;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -24,7 +24,7 @@ public class ConfigServiceTest extends AbstractJUnit4SpringContextTests{
 		config.setKey("key");
 		config.setValue("value");
 		config.setDesc("desc");
-		config.setEnable(DataDick.CONFIG_ENABLE);
+		config.setEnable(DataDic.CONFIG_ENABLE);
 		String key = configService.save(config);
 		Assert.assertEquals("key",key);
     }
