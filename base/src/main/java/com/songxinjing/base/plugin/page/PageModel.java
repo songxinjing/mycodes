@@ -1,4 +1,4 @@
-package com.songxinjing.base.util;
+package com.songxinjing.base.plugin.page;
 
 import java.util.ArrayList;
 import java.util.List;

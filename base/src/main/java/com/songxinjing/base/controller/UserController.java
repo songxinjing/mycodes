@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.songxinjing.base.constant.ViewPath;
 import com.songxinjing.base.domain.User;
+import com.songxinjing.base.plugin.page.PageModel;
 import com.songxinjing.base.service.UserService;
-import com.songxinjing.base.util.PageModel;
 
 /**
  * 树型控制类
