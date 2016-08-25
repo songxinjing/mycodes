@@ -2,14 +2,13 @@ package com.songxinjing.base.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.songxinjing.base.constant.ViewPath;
+import com.songxinjing.base.controller.base.BaseController;
 
 /**
  * 主页控制类
@@ -18,9 +17,7 @@ import com.songxinjing.base.constant.ViewPath;
  * 
  */
 @Controller
-public class HomeController {
-
-	private static Logger logger = LogManager.getLogger(HomeController.class);
+public class HomeController extends BaseController {
 
 	@RequestMapping(value = { ViewPath.INDEX }, method = RequestMethod.GET)
 	public String home(Model model, HttpServletRequest request) {

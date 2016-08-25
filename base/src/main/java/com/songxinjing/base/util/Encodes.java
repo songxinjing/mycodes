@@ -8,8 +8,8 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 封装各种格式的编码解码工具类.
@@ -21,7 +21,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class Encodes {
 	
-	protected static final Logger logger = LogManager.getLogger(Encodes.class);
+	protected static final Logger logger = LoggerFactory.getLogger(Encodes.class);
 
 	private static final String DEFAULT_URL_ENCODING = "UTF-8";
 	private static final char[] BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".toCharArray();

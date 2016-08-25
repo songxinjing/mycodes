@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.songxinjing.base.constant.DataDic;
 import com.songxinjing.base.constant.ViewPath;
+import com.songxinjing.base.controller.base.BaseController;
 import com.songxinjing.base.domain.TreeNode;
 import com.songxinjing.base.domain.UserNode;
 import com.songxinjing.base.form.TreeNodeForm;
@@ -28,9 +27,7 @@ import com.songxinjing.base.service.UserNodeService;
  * 
  */
 @Controller
-public class TreeNodeController {
-
-	private static Logger logger = LogManager.getLogger(TreeNodeController.class);
+public class TreeNodeController extends BaseController {
 
 	@Autowired
 	TreeNodeService treeNodeService;

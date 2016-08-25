@@ -1,4 +1,4 @@
-<link href="//cdn.bootcss.com/jquery.fancytree/2.15.0/skin-bootstrap/ui.fancytree.min.css" rel="stylesheet">
+<link href="${rc.contextPath}/resources/fancytree/css/ui.fancytree.min.css" rel="stylesheet">
 
 <div class="panel panel-default">
 	<div class="panel-heading">
@@ -79,7 +79,7 @@
   </div>
 </div>
 
-<script src="//cdn.bootcss.com/jquery.fancytree/2.15.0/jquery.fancytree-all.min.js"></script>
+<script src="${rc.contextPath}/resources/fancytree/js/jquery.fancytree-all.min.js"></script>
 <script> 
   glyph_opts = {
     map: {

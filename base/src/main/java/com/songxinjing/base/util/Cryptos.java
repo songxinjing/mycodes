@@ -11,8 +11,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 支持HMAC-SHA1消息签名 及 DES/AES对称加密的工具类.
@@ -23,7 +23,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class Cryptos {
 
-	protected static final Logger logger = LogManager.getLogger(Cryptos.class);
+	protected static final Logger logger = LoggerFactory.getLogger(Cryptos.class);
 
 	private static final String AES = "AES";
 	private static final String AES_CBC = "AES/CBC/PKCS5Padding";

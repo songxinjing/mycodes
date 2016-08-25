@@ -9,16 +9,16 @@
 	<packaging>war</packaging>
 
 	<properties>
-		<version.springframework>4.2.5.RELEASE</version.springframework>
-		<version.hibernate>5.1.0.Final</version.hibernate>
+		<version.springframework>4.3.1.RELEASE</version.springframework>
+		<version.hibernate>4.3.11.Final</version.hibernate>
 		<version.velocity>1.7</version.velocity>
 		<version.velocity-tools>2.0</version.velocity-tools>
-		<version.aspectjweaver>1.8.7</version.aspectjweaver>
-		<version.fastjson>1.2.8</version.fastjson>
+		<version.aspectjweaver>1.8.9</version.aspectjweaver>
+		<version.fastjson>1.2.14</version.fastjson>
 		<version.commons.beanutils>1.9.2</version.commons.beanutils>
 		<version.commons-lang3>3.4</version.commons-lang3>
 		<version.commons-codec>1.10</version.commons-codec>
-		<version.mysql-connector>5.1.8</version.mysql-connector>
+		<version.mysql-connector>5.1.39</version.mysql-connector>
 		<version.servlet>3.1.0</version.servlet>
 		<version.log4j>2.3</version.log4j>
 		<version.junit>4.12</version.junit>
@@ -73,10 +73,11 @@
 			<version>${version.aspectjweaver}</version>
 		</dependency>
 
+		<!-- fastJson -->
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>${version.mysql-connector}</version>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>${version.fastjson}</version>
 		</dependency>
 
 		<!-- apache-commons -->
@@ -98,18 +99,27 @@
 			<version>${version.commons-codec}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${version.mysql-connector}</version>
+		</dependency>
+
 		<!-- log4j -->
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
 			<version>${version.log4j}</version>
 		</dependency>
-
-		<!-- fastJson -->
 		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>fastjson</artifactId>
-			<version>${version.fastjson}</version>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>${version.log4j}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-web</artifactId>
+			<version>${version.log4j}</version>
 		</dependency>
 
 		<!-- provided -->

@@ -5,8 +5,8 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 /**
@@ -18,7 +18,7 @@ import org.springframework.util.Assert;
  */
 public class ReflectionUtil {
 
-	private static Logger logger = LogManager.getLogger(ReflectionUtil.class);
+	private static Logger logger = LoggerFactory.getLogger(ReflectionUtil.class);
 	
 	private ReflectionUtil() {
 	}

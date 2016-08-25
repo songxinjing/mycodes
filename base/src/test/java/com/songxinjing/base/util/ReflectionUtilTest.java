@@ -1,13 +1,13 @@
 package com.songxinjing.base.util;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ReflectionUtilTest {
 	
-	protected static final Logger logger = LogManager.getLogger(ReflectionUtilTest.class);
+	protected static final Logger logger = LoggerFactory.getLogger(ReflectionUtilTest.class);
 
 	@Test
 	public void getAndSetFieldValue() {
@@ -29,7 +29,7 @@ public class ReflectionUtilTest {
 			ReflectionUtil.getFieldValue(bean, "notExist");
 			ReflectionUtil.setFieldValue(bean, "notExist", 2);
 		} catch (Exception e) {
-			logger.info(e);
+			logger.info("Field Not Exist!", e);
 		}
 	}
 

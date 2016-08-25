@@ -1,13 +1,13 @@
 package com.songxinjing.base.util;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EncodesTest {
 
-	protected static final Logger logger = LogManager.getLogger(EncodesTest.class);
+	protected static final Logger logger = LoggerFactory.getLogger(EncodesTest.class);
 
 	@Test
 	public void hexEncode() {
