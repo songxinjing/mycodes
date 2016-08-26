@@ -1,11 +1,12 @@
 package com.songxinjing.base.domain;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.ManyToMany;
 
 /**
  * 账户信息表实体类
@@ -14,7 +15,6 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "BASE_USER")
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -23,32 +23,44 @@ public class User implements Serializable {
 	 * 用户ID
 	 */
 	@Id
-	@Column(name = "USER_ID", length = 16)
+	@Column(length = 16)
 	private String userId;
 
 	/**
 	 * 邮箱
 	 */
-	@Column(name = "EMAIL", length = 64)
+	@Column(length = 64)
 	private String email;
 
 	/**
 	 * 手机号码
 	 */
-	@Column(name = "PHONE", length = 16)
+	@Column(length = 16)
 	private String phone;
 
 	/**
 	 * 密码密文
 	 */
-	@Column(name = "PASSWORD", length = 64)
+	@Column(length = 64)
 	private String password;
 
 	/**
 	 * 用户状态：0-正常；1-冻结；2-删除
 	 */
-	@Column(name = "STATE")
+	@Column
 	private Integer state;
+	
+	/**
+	 * 用户所属用户组列表
+	 */
+	@ManyToMany
+	private List<UserGroup> groups;
+	
+	/**
+	 * 用户选中节点列表
+	 */
+	@ManyToMany(mappedBy = "selectedUsers")
+	private List<TreeNode> selectedNodes;
 
 	public String getUserId() {
 		return userId;
@@ -88,6 +100,22 @@ public class User implements Serializable {
 
 	public void setState(Integer state) {
 		this.state = state;
+	}
+
+	public List<UserGroup> getGroups() {
+		return groups;
+	}
+
+	public void setGroups(List<UserGroup> groups) {
+		this.groups = groups;
+	}
+
+	public List<TreeNode> getSelectedNodes() {
+		return selectedNodes;
+	}
+
+	public void setSelectedNodes(List<TreeNode> selectedNodes) {
+		this.selectedNodes = selectedNodes;
 	}
 
 }

@@ -15,10 +15,8 @@ import com.songxinjing.base.constant.DataDic;
 import com.songxinjing.base.constant.ViewPath;
 import com.songxinjing.base.controller.base.BaseController;
 import com.songxinjing.base.domain.TreeNode;
-import com.songxinjing.base.domain.UserNode;
 import com.songxinjing.base.form.TreeNodeForm;
 import com.songxinjing.base.service.TreeNodeService;
-import com.songxinjing.base.service.UserNodeService;
 
 /**
  * 树型控制类
@@ -31,9 +29,6 @@ public class TreeNodeController extends BaseController {
 
 	@Autowired
 	TreeNodeService treeNodeService;
-	
-	@Autowired
-	UserNodeService userNodeService;
 
 	@RequestMapping(value = { ViewPath.TREE_INDEX }, method = RequestMethod.GET)
 	public String index(Model model, HttpServletRequest request) {
@@ -51,8 +46,8 @@ public class TreeNodeController extends BaseController {
 		}
 		if (deep == null) {
 			deep = false;
-		}		
-		return treeNodeService.findChildrenForm(key, deep);
+		}
+		return treeNodeService.findForm(key, deep);
 	}
 
 	@RequestMapping(value = { ViewPath.TREE_EDIT }, method = RequestMethod.GET)
@@ -61,20 +56,20 @@ public class TreeNodeController extends BaseController {
 		model.addAttribute("menu", "tree");
 		return ViewPath.TREE_EDIT;
 	}
-	
+
 	@RequestMapping(value = { ViewPath.TREE_SAVE_SELECTED }, method = RequestMethod.POST)
 	@ResponseBody
 	public boolean saveSelected(Model model, HttpServletRequest request, int[] keys) {
 		logger.info("保存选中节点");
-		userNodeService.saveSelected(keys, "0001");
+		treeNodeService.saveSelected(keys, "0001");
 		return true;
 	}
-	
+
 	@RequestMapping(value = { ViewPath.TREE_GET_SELECTED }, method = RequestMethod.POST)
 	@ResponseBody
-	public List<UserNode> getSelected(Model model, HttpServletRequest request) {
+	public List<TreeNode> getSelected(Model model, HttpServletRequest request) {
 		logger.info("获取选中节点");
-		return userNodeService.findByUserId("0001");
+		return treeNodeService.getSelected("0001");
 	}
 
 	@RequestMapping(value = { ViewPath.TREE_SAVE }, method = RequestMethod.POST)
@@ -87,7 +82,7 @@ public class TreeNodeController extends BaseController {
 		if ("A".equals(type)) { // 新增
 			TreeNode treeNode = new TreeNode();
 			treeNode.setNodeName(nodeName);
-			treeNode.setParentId(key);
+			treeNode.setParent(treeNodeService.find(key));
 			treeNode.setOrderNum(treeNodeService.genOrderNum(key));
 			treeNode.setState(DataDic.RECODE_NORMAL);
 			treeNodeService.save(treeNode);
@@ -112,7 +107,7 @@ public class TreeNodeController extends BaseController {
 		treeNodeService.delete(key);
 		return true;
 	}
-	
+
 	@RequestMapping(value = { ViewPath.TREE_CHILDLIST }, method = RequestMethod.POST)
 	@ResponseBody
 	public List<TreeNode> childList(Model model, HttpServletRequest request, Integer key) {
@@ -120,9 +115,9 @@ public class TreeNodeController extends BaseController {
 		if (key == null) {
 			return null;
 		}
-		return treeNodeService.findChildren(key);
+		return treeNodeService.find(key).getChildren();
 	}
-	
+
 	@RequestMapping(value = { ViewPath.TREE_UPDOWN }, method = RequestMethod.POST)
 	@ResponseBody
 	public boolean upDown(Model model, HttpServletRequest request, Integer nodeId, String type) {
@@ -132,17 +127,17 @@ public class TreeNodeController extends BaseController {
 		}
 		TreeNode node = treeNodeService.find(nodeId);
 		int orderNum = node.getOrderNum();
-		if("up".equals(type)){
+		if ("up".equals(type)) {
 			TreeNode preNode = treeNodeService.findPreNode(node);
-			if(preNode == null){
+			if (preNode == null) {
 				return false;
 			}
 			node.setOrderNum(preNode.getOrderNum());
-			preNode.setOrderNum(orderNum);			
+			preNode.setOrderNum(orderNum);
 			treeNodeService.update(preNode);
-		} else if("down".equals(type)){
-			TreeNode nextNode = treeNodeService.findNextNode(node);	
-			if(nextNode == null){
+		} else if ("down".equals(type)) {
+			TreeNode nextNode = treeNodeService.findNextNode(node);
+			if (nextNode == null) {
 				return false;
 			}
 			node.setOrderNum(nextNode.getOrderNum());
@@ -150,8 +145,8 @@ public class TreeNodeController extends BaseController {
 			treeNodeService.update(nextNode);
 		} else {
 			return false;
-		}		
-		treeNodeService.update(node);		
+		}
+		treeNodeService.update(node);
 		return true;
 	}
 

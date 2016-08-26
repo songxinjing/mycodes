@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.songxinjing.base.constant.DataDic;
 import com.songxinjing.base.dao.ConfigDao;
 import com.songxinjing.base.domain.Config;
+import com.songxinjing.base.service.base.BaseService;
 
 /**
  * 配置信息服务类
@@ -15,18 +16,11 @@ import com.songxinjing.base.domain.Config;
  * 
  */
 @Service
-public class ConfigService {
+public class ConfigService extends BaseService<Config, String>{
 
 	@Autowired
-	ConfigDao configDao;
-	
-	/**
-	 * 获取指定Key的配置信息
-	 * @param key 指定的key
-	 * @return
-	 */
-	public Config find(String key) {
-		return configDao.findByPK(key);
+	public void setSuperDao(ConfigDao configDao) {
+		super.setDao(configDao);
 	}
 	
 	/**
@@ -36,31 +30,7 @@ public class ConfigService {
 	public List<Config> findEnable() {		
 		Config example = new Config();
 		example.setEnable(DataDic.CONFIG_ENABLE);
-		return configDao.find(example);
-	}
-	
-	/**
-	 * 新增一个配置
-	 * @return
-	 */
-	public String save(Config entity) {
-		return (String) configDao.save(entity);
-	}
-	
-	/**
-	 * 修改一个配置
-	 * @return
-	 */
-	public void update(Config entity) {
-		configDao.update(entity);
-	}
-	
-	/**
-	 * 删除一个配置
-	 * @return
-	 */
-	public void delete(String key) {
-		configDao.delete(key);
+		return find(example);
 	}
 	
 	/**
@@ -70,7 +40,7 @@ public class ConfigService {
 	public List<Config> findNotEnable() {		
 		Config example = new Config();
 		example.setEnable(DataDic.CONFIG_NOT_ENABLE);
-		return configDao.find(example);
+		return find(example);
 	}
 
 }

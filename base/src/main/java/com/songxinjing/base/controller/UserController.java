@@ -45,8 +45,8 @@ public class UserController {
 		PageModel<User> pageModel = new PageModel<User>();
 		pageModel.init(page, total);
 		pageModel.setUrl(ViewPath.USER_LIST + ".html");
-
-		List<User> users = userService.findPage(pageModel.getRecFrom(), pageModel.getPageSize());
+		String hql = "from User";
+		List<User> users = userService.findPage(hql,pageModel.getRecFrom(), pageModel.getPageSize());
 		pageModel.setRecList(users);
 
 		model.addAttribute("pageModel", pageModel);

@@ -4,11 +4,8 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 import org.springframework.util.Assert;
@@ -21,12 +18,12 @@ import com.songxinjing.base.util.ReflectionUtil;
  * @author songxinjing
  * 
  */
-public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSupport implements IBaseDao<T, PK> {
+public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSupport {
 
 	protected Class<T> entityClass;
 
 	public BaseDao() {
-		this.entityClass = ReflectionUtil.getSuperClassGenricType(getClass(), 0);
+		entityClass = ReflectionUtil.getSuperClassGenricType(getClass(), 0);
 	}
 
 	@Autowired
@@ -34,79 +31,103 @@ public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSu
 		super.setSessionFactory(sessionFactory);
 	}
 
-	@Override
+	/**
+	 * 新增
+	 * 
+	 * @param entity
+	 *            实体对象
+	 * @return 主键值
+	 */
 	public Serializable save(final T entity) {
 		Assert.notNull(entity);
-		return this.getHibernateTemplate().save(entity);
+		return getHibernateTemplate().save(entity);
 	}
 
-	@Override
+	/**
+	 * 修改
+	 * 
+	 * @param entity
+	 *            实体对象
+	 */
 	public void update(final T entity) {
 		Assert.notNull(entity);
-		this.getHibernateTemplate().update(entity);
+		getHibernateTemplate().update(entity);
 	}
 
-	@Override
+	/**
+	 * 删除单个对象
+	 * 
+	 * @param entity
+	 *            实体对象
+	 */
 	public void delete(final T entity) {
 		Assert.notNull(entity);
-		this.getHibernateTemplate().delete(entity);
+		getHibernateTemplate().delete(entity);
 	}
 
-	@Override
-	public void delete(final PK id) {
-		Assert.notNull(id);
-		this.delete(this.findByPK(id));
-	}
-
-	@Override
+	/**
+	 * 删除一组对象
+	 * 
+	 * @param list
+	 *            实体对象List
+	 */
 	public void delete(final Collection<T> entities) {
 		Assert.notNull(entities);
-		this.getHibernateTemplate().deleteAll(entities);
+		getHibernateTemplate().deleteAll(entities);
 	}
 
-	@Override
+	/**
+	 * 查询全部对象
+	 * 
+	 * @return 实体对象List
+	 */
 	public List<T> find() {
-		return this.getHibernateTemplate().loadAll(entityClass);
+		return getHibernateTemplate().loadAll(entityClass);
 	}
 
-	@Override
-	public T findByPK(final PK id) {
+	/**
+	 * 通过主键ID查询对象.
+	 * 
+	 * @param id
+	 *            主键
+	 * @return 实体对象
+	 */
+	public T find(final PK id) {
 		Assert.notNull(id);
-		return this.getHibernateTemplate().get(entityClass, id);
+		return getHibernateTemplate().get(entityClass, id);
 	}
 
-	@Override
+	/**
+	 * 通过含有部分属性的对象查询符合该属性的对象List.
+	 * 
+	 * @param entity
+	 *            模板实体对象
+	 * @return 实体对象List
+	 */
 	public List<T> find(final T entity) {
 		Assert.notNull(entity);
-		return this.getHibernateTemplate().findByExample(entity);
-	}
-
-	@Override
-	public List<?> find(final String queryString, final Object... values) {
-		Assert.hasText(queryString);
-		return this.getHibernateTemplate().find(queryString, values);
+		return getHibernateTemplate().findByExample(entity);
 	}
 	
-	@Override
-	public List<?> findIn(final String queryString, String placeHolder, List<?> values) {
-		Assert.hasText(queryString);
-		Assert.hasText(placeHolder);
-		return this.getHibernateTemplate().findByNamedParam(queryString, placeHolder, values);
-	}
-	
-	@Override
+	/**
+	 * 分页查询
+	 * @param queryString
+	 * @param from
+	 * @param size
+	 * @param values
+	 * @return
+	 */
 	public List<?> findPage(final String queryString, final int from, final int size, final Object... values) {
 		Assert.hasText(queryString);
 		return createQuery(queryString, values).setFirstResult(from).setMaxResults(size).list();
 	}
-
-	@Override
-	public int updOrDel(final String queryString, final Object... values) {
-		Assert.hasText(queryString);
-		return this.getHibernateTemplate().bulkUpdate(queryString, values);
-	}
 	
-	@Override
+	/**
+	 * 创建Query对象
+	 * @param sql
+	 * @param values
+	 * @return
+	 */
 	public Query createQuery(String sql, Object... values) {
 		Assert.hasText(sql);
 		Query query = this.currentSession().createQuery(sql);
@@ -116,25 +137,6 @@ public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSu
 			}
 		}
 		return query;
-	}
-
-	@Override
-	public Criteria createCriteria(Criterion... criterions) {
-		Criteria criteria = this.currentSession().createCriteria(entityClass);
-		for (Criterion c : criterions) {
-			criteria.add(c);
-		}
-		return criteria;
-	}
-
-	@Override
-	public boolean isPropertyUnique(String propertyName, Object newValue, Object orgValue) {
-		Assert.hasText(propertyName);
-		if (newValue == null || newValue.equals(orgValue)) {
-			return true;
-		}
-		int num = createCriteria(Restrictions.eq(propertyName, newValue)).list().size();
-		return (num == 0);
 	}
 
 }

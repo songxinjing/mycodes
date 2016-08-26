@@ -13,20 +13,20 @@ import com.songxinjing.base.domain.Config;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
-public class ConfigServiceTest extends AbstractJUnit4SpringContextTests{
-	
+public class ConfigServiceTest extends AbstractJUnit4SpringContextTests {
+
 	@Autowired
 	ConfigService configService;
-	
+
 	@Test
-    public void saveTest() {
+	public void saveTest() {
 		Config config = new Config();
 		config.setKey("key");
 		config.setValue("value");
 		config.setDesc("desc");
 		config.setEnable(DataDic.CONFIG_ENABLE);
-		String key = configService.save(config);
-		Assert.assertEquals("key",key);
-    }
-	
+		String key = (String) configService.save(config);
+		Assert.assertEquals("key", key);
+	}
+
 }

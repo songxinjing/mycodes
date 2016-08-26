@@ -1,13 +1,14 @@
 package com.songxinjing.base.domain;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.ManyToMany;
 
 /**
  * 用户组信息表实体类
@@ -16,7 +17,6 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "BASE_USER_GROUP")
 public class UserGroup implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -25,21 +25,27 @@ public class UserGroup implements Serializable {
 	 * 用户组ID
 	 */
 	@Id
-	@Column(name = "GROUP_ID")
+	@Column
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer groupId;
 
 	/**
 	 * 用户组名称
 	 */
-	@Column(name = "GROUP_NAME", length = 16)
+	@Column(length = 16)
 	private String groupName;
 
 	/**
 	 * 用户组状态：0-正常；1-删除
 	 */
-	@Column(name = "STATE")
+	@Column
 	private Integer state;
+
+	/**
+	 * 成员列表
+	 */
+	@ManyToMany(mappedBy = "groups")
+	private List<User> members;
 
 	public Integer getGroupId() {
 		return groupId;
@@ -63,6 +69,14 @@ public class UserGroup implements Serializable {
 
 	public void setState(Integer state) {
 		this.state = state;
+	}
+
+	public List<User> getMembers() {
+		return members;
+	}
+
+	public void setMembers(List<User> members) {
+		this.members = members;
 	}
 
 }

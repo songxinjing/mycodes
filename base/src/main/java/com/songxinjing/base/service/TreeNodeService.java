@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import com.songxinjing.base.dao.TreeNodeDao;
 import com.songxinjing.base.domain.TreeNode;
+import com.songxinjing.base.domain.User;
 import com.songxinjing.base.form.TreeNodeForm;
+import com.songxinjing.base.service.base.BaseService;
 
 /**
  * 配置信息服务类
@@ -17,74 +19,14 @@ import com.songxinjing.base.form.TreeNodeForm;
  * 
  */
 @Service
-public class TreeNodeService {
+public class TreeNodeService extends BaseService<TreeNode, Integer> {
 
 	@Autowired
-	TreeNodeDao treeNodeDao;
+	private UserService userService;
 
-	/**
-	 * 根据节点ID获取节点对象
-	 * 
-	 * @param nodeId
-	 *            节点ID
-	 * 
-	 * @return TreeNode节点对象
-	 */
-	public TreeNode find(int nodeId) {
-		return treeNodeDao.findByPK(nodeId);
-	}
-
-	/**
-	 * 根据节点ID删除节点对象
-	 * 
-	 * @param nodeId
-	 *            节点ID
-	 */
-	public void delete(int nodeId) {
-		treeNodeDao.delete(nodeId);
-	}
-
-	/**
-	 * 根据节点对象更新数据库
-	 * 
-	 * @param treeNode
-	 *            节点对象
-	 */
-	public void update(TreeNode treeNode) {
-		treeNodeDao.update(treeNode);
-	}
-
-	/**
-	 * 保存新节点
-	 * 
-	 * @param treeNode
-	 * 
-	 * @return nodeId
-	 */
-	public int save(TreeNode treeNode) {
-		return (Integer) treeNodeDao.save(treeNode);
-	}
-
-	/**
-	 * 生成同级排序序号
-	 * 
-	 * @param parentId
-	 *            指定的父节点
-	 * @return 同级排序序号
-	 */
-	public int genOrderNum(int parentId) {
-		return treeNodeDao.findMaxOrderNum(parentId) + 1;
-	}
-
-	/**
-	 * 获取父节点下的所有子节点（按顺序）
-	 * 
-	 * @param parentId
-	 *            指定的父节点
-	 * @return 所有子节点List
-	 */
-	public List<TreeNode> findChildren(int parentId) {
-		return treeNodeDao.findChildren(parentId);
+	@Autowired
+	public void setSuperDao(TreeNodeDao treeNodeDao) {
+		super.setDao(treeNodeDao);
 	}
 
 	/**
@@ -96,8 +38,8 @@ public class TreeNodeService {
 	 *            是否递归遍历
 	 * @return 子节点List
 	 */
-	public List<TreeNodeForm> findChildrenForm(int parentId, boolean deep) {
-		List<TreeNode> childNodes = findChildren(parentId);
+	public List<TreeNodeForm> findForm(int parentId, boolean deep) {
+		List<TreeNode> childNodes = find(parentId).getChildren();
 		return convert(childNodes, deep);
 	}
 
@@ -115,7 +57,7 @@ public class TreeNodeService {
 			TreeNodeForm nodeForm = new TreeNodeForm();
 			nodeForm.setKey(node.getNodeId());
 			nodeForm.setTitle(node.getNodeName());
-			List<TreeNode> childNodes = treeNodeDao.findChildren(node.getNodeId());
+			List<TreeNode> childNodes = node.getChildren();
 			if (childNodes.size() > 0) {
 				nodeForm.setFolder(true);
 				if (deep) {
@@ -138,7 +80,13 @@ public class TreeNodeService {
 	 * @return 上一个同级节点，没有则返回null
 	 */
 	public TreeNode findPreNode(TreeNode node) {
-		return treeNodeDao.findPreNode(node);
+		List<TreeNode> children = node.getParent().getChildren();
+		int index = children.indexOf(node);
+		if (index <= 0) {
+			return null;
+		} else {
+			return children.get(index - 1);
+		}
 	}
 
 	/**
@@ -149,7 +97,45 @@ public class TreeNodeService {
 	 * @return 下一个同级节点，没有则返回null
 	 */
 	public TreeNode findNextNode(TreeNode node) {
-		return treeNodeDao.findNextNode(node);
+		List<TreeNode> children = node.getParent().getChildren();
+		int index = children.indexOf(node);
+		if (index < 0 || index >= children.size() -1) {
+			return null;
+		} else {
+			return children.get(index + 1);
+		}
+	}
+
+	/**
+	 * 保存用户的节点选择
+	 * 
+	 */
+	public void saveSelected(int[] keys, String userId) {
+		List<TreeNode> list = new ArrayList<TreeNode>();
+		for (int i = 0; i < keys.length; i++) {
+			list.add(find(keys[i]));
+		}
+		User user = userService.find(userId);
+		user.setSelectedNodes(list);
+		userService.update(user);
+	}
+
+	/**
+	 * 获取用户的节点选择
+	 * 
+	 */
+	public List<TreeNode> getSelected(String userId) {
+		return userService.find(userId).getSelectedNodes();
+	}
+	
+	/**
+	 * 生成给定节点的子节点新顺序值
+	 * @param parentId
+	 * @return
+	 */
+	public int genOrderNum(int parentId){
+		List<TreeNode> children = find(parentId).getChildren();
+		return children.get(children.size() -1).getOrderNum() + 1;
 	}
 
 }
