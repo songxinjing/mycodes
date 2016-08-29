@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.songxinjing.base.constant.DataDic;
 import com.songxinjing.base.constant.ViewPath;
 import com.songxinjing.base.controller.base.BaseController;
 import com.songxinjing.base.domain.TreeNode;
@@ -84,7 +83,6 @@ public class TreeNodeController extends BaseController {
 			treeNode.setNodeName(nodeName);
 			treeNode.setParent(treeNodeService.find(key));
 			treeNode.setOrderNum(treeNodeService.genOrderNum(key));
-			treeNode.setState(DataDic.RECODE_NORMAL);
 			treeNodeService.save(treeNode);
 			return true;
 		}

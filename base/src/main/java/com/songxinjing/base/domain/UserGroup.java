@@ -44,7 +44,7 @@ public class UserGroup implements Serializable {
 	/**
 	 * 成员列表
 	 */
-	@ManyToMany(mappedBy = "groups")
+	@ManyToMany
 	private List<User> members;
 
 	public Integer getGroupId() {

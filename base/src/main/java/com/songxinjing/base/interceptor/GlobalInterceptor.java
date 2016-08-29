@@ -35,7 +35,7 @@ public class GlobalInterceptor implements HandlerInterceptor {
 			ModelAndView modelView) throws Exception {
 		List<Config> configs = configService.findEnable();
 		for (Config c : configs) {
-			modelView.addObject(c.getKey(), c.getValue());
+			modelView.addObject(c.getName(), c.getValue());
 		}
 	}
 

@@ -48,18 +48,18 @@ public class User implements Serializable {
 	 * 用户状态：0-正常；1-冻结；2-删除
 	 */
 	@Column
-	private Integer state;
+	private Byte state;
 	
 	/**
 	 * 用户所属用户组列表
 	 */
-	@ManyToMany
+	@ManyToMany(mappedBy = "members")
 	private List<UserGroup> groups;
 	
 	/**
 	 * 用户选中节点列表
 	 */
-	@ManyToMany(mappedBy = "selectedUsers")
+	@ManyToMany
 	private List<TreeNode> selectedNodes;
 
 	public String getUserId() {
@@ -94,11 +94,11 @@ public class User implements Serializable {
 		this.password = password;
 	}
 
-	public Integer getState() {
+	public Byte getState() {
 		return state;
 	}
 
-	public void setState(Integer state) {
+	public void setState(Byte state) {
 		this.state = state;
 	}
 

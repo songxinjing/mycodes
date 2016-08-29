@@ -47,29 +47,23 @@ public class TreeNode implements Serializable {
 	private Integer orderNum;
 
 	/**
-	 * 节点状态：0-正常；1-删除
-	 */
-	@Column
-	private Integer state;
-
-	/**
 	 * 父节点
 	 */
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn
 	private TreeNode parent;
 
 	/**
 	 * 子节点列表
 	 */
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "parent")
 	@OrderBy("orderNum")
 	private List<TreeNode> children;
 
 	/**
 	 * 选中该节点用户列表
 	 */
-	@ManyToMany
+	@ManyToMany(mappedBy = "selectedNodes")
 	private List<User> selectedUsers;
 
 	public Integer getNodeId() {
@@ -94,14 +88,6 @@ public class TreeNode implements Serializable {
 
 	public void setOrderNum(Integer orderNum) {
 		this.orderNum = orderNum;
-	}
-
-	public Integer getState() {
-		return state;
-	}
-
-	public void setState(Integer state) {
-		this.state = state;
 	}
 
 	public TreeNode getParent() {

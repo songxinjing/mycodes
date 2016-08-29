@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.songxinjing.base.constant.DataDic;
 import com.songxinjing.base.dao.TreeNodeDao;
 import com.songxinjing.base.domain.TreeNode;
 import com.songxinjing.base.domain.User;
@@ -39,8 +40,14 @@ public class TreeNodeService extends BaseService<TreeNode, Integer> {
 	 * @return 子节点List
 	 */
 	public List<TreeNodeForm> findForm(int parentId, boolean deep) {
-		List<TreeNode> childNodes = find(parentId).getChildren();
-		return convert(childNodes, deep);
+		if (parentId == 0) { // 默认获取根节点
+			TreeNode node = find(DataDic.TREE_ROOT_ID);
+			List<TreeNode> list = new ArrayList<TreeNode>();
+			list.add(node);
+			return convert(list, deep);
+		}
+		List<TreeNode> list = find(parentId).getChildren();
+		return convert(list, deep);
 	}
 
 	/**
@@ -99,7 +106,7 @@ public class TreeNodeService extends BaseService<TreeNode, Integer> {
 	public TreeNode findNextNode(TreeNode node) {
 		List<TreeNode> children = node.getParent().getChildren();
 		int index = children.indexOf(node);
-		if (index < 0 || index >= children.size() -1) {
+		if (index < 0 || index >= children.size() - 1) {
 			return null;
 		} else {
 			return children.get(index + 1);
@@ -127,15 +134,16 @@ public class TreeNodeService extends BaseService<TreeNode, Integer> {
 	public List<TreeNode> getSelected(String userId) {
 		return userService.find(userId).getSelectedNodes();
 	}
-	
+
 	/**
 	 * 生成给定节点的子节点新顺序值
+	 * 
 	 * @param parentId
 	 * @return
 	 */
-	public int genOrderNum(int parentId){
+	public int genOrderNum(int parentId) {
 		List<TreeNode> children = find(parentId).getChildren();
-		return children.get(children.size() -1).getOrderNum() + 1;
+		return children.get(children.size() - 1).getOrderNum() + 1;
 	}
 
 }

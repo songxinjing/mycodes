@@ -22,7 +22,7 @@ public class Config implements Serializable {
 	 */
 	@Id
 	@Column(length = 32)
-	private String key;
+	private String name;
 
 	/**
 	 * 配置项Value
@@ -34,20 +34,20 @@ public class Config implements Serializable {
 	 * 配置项描述
 	 */
 	@Column(length = 255)
-	private String desc;
+	private String descp;
 
 	/**
 	 * 是否激活：0-未激活；1-激活
 	 */
 	@Column
-	private Integer enable;
+	private Boolean enable;
 
-	public String getKey() {
-		return key;
+	public String getName() {
+		return name;
 	}
 
-	public void setKey(String key) {
-		this.key = key;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getValue() {
@@ -58,19 +58,19 @@ public class Config implements Serializable {
 		this.value = value;
 	}
 
-	public String getDesc() {
-		return desc;
+	public String getDescp() {
+		return descp;
 	}
 
-	public void setDesc(String desc) {
-		this.desc = desc;
+	public void setDescp(String descp) {
+		this.descp = descp;
 	}
 
-	public int getEnable() {
+	public Boolean getEnable() {
 		return enable;
 	}
 
-	public void setEnable(Integer enable) {
+	public void setEnable(Boolean enable) {
 		this.enable = enable;
 	}
 

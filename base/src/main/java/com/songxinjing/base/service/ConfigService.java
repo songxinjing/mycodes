@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.songxinjing.base.constant.DataDic;
 import com.songxinjing.base.dao.ConfigDao;
 import com.songxinjing.base.domain.Config;
 import com.songxinjing.base.service.base.BaseService;
@@ -29,7 +28,7 @@ public class ConfigService extends BaseService<Config, String>{
 	 */
 	public List<Config> findEnable() {		
 		Config example = new Config();
-		example.setEnable(DataDic.CONFIG_ENABLE);
+		example.setEnable(true);
 		return find(example);
 	}
 	
@@ -39,7 +38,7 @@ public class ConfigService extends BaseService<Config, String>{
 	 */
 	public List<Config> findNotEnable() {		
 		Config example = new Config();
-		example.setEnable(DataDic.CONFIG_NOT_ENABLE);
+		example.setEnable(false);
 		return find(example);
 	}
 
