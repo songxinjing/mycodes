@@ -55,21 +55,21 @@ public class TreeNode implements Serializable {
 	/**
 	 * 父节点
 	 */
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn
 	private TreeNode parent;
 
 	/**
 	 * 子节点列表
 	 */
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "parent")
 	@OrderBy("orderNum")
 	private List<TreeNode> children;
 
 	/**
 	 * 选中该节点用户列表
 	 */
-	@ManyToMany
+	@ManyToMany(mappedBy = "selectedNodes")
 	private List<User> selectedUsers;
 
 	public Integer getNodeId() {
