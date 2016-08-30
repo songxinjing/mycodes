@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.songxinjing.base.constant.ViewPath;
+import com.songxinjing.base.controller.base.BaseController;
 import com.songxinjing.base.domain.User;
 import com.songxinjing.base.plugin.page.PageModel;
 import com.songxinjing.base.service.UserService;
@@ -24,7 +25,7 @@ import com.songxinjing.base.service.UserService;
  * 
  */
 @Controller
-public class UserController {
+public class UserController extends BaseController {
 
 	private static Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -38,7 +39,7 @@ public class UserController {
 		if (page == null) {
 			page = 1;
 		}
-		
+
 		int total = userService.find().size();
 
 		// 分页代码
@@ -46,7 +47,7 @@ public class UserController {
 		pageModel.init(page, total);
 		pageModel.setUrl(ViewPath.USER_LIST + ".html");
 		String hql = "from User";
-		List<User> users = userService.findPage(hql,pageModel.getRecFrom(), pageModel.getPageSize());
+		List<User> users = userService.findPage(hql, pageModel.getRecFrom(), pageModel.getPageSize());
 		pageModel.setRecList(users);
 
 		model.addAttribute("pageModel", pageModel);

@@ -37,5 +37,5 @@ public class HomeController extends BaseController {
 		logger.info("进入404页面");
 		return ViewPath.SYSTEM_404;
 	}
-	
+
 }
