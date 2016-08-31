@@ -1,6 +1,6 @@
 package com.songxinjing.base.constant;
 
-public class DataDic {
+public class Constant {
 	
 	/**
 	 * 分页组件：每页显示数目

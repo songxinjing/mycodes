@@ -12,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.songxinjing.base.constant.ViewPath;
 import com.songxinjing.base.controller.base.BaseController;
 import com.songxinjing.base.domain.User;
 import com.songxinjing.base.plugin.page.PageModel;
@@ -32,7 +31,7 @@ public class UserController extends BaseController {
 	@Autowired
 	UserService userService;
 
-	@RequestMapping(value = { ViewPath.USER_LIST }, method = RequestMethod.GET)
+	@RequestMapping(value = "user/list", method = RequestMethod.GET)
 	public String list(Model model, HttpServletRequest request, Integer page) {
 		logger.info("进入用户列表页面");
 
@@ -45,7 +44,7 @@ public class UserController extends BaseController {
 		// 分页代码
 		PageModel<User> pageModel = new PageModel<User>();
 		pageModel.init(page, total);
-		pageModel.setUrl(ViewPath.USER_LIST + ".html");
+		pageModel.setUrl("user/list.html");
 		String hql = "from User";
 		List<User> users = userService.findPage(hql, pageModel.getRecFrom(), pageModel.getPageSize());
 		pageModel.setRecList(users);
@@ -53,7 +52,7 @@ public class UserController extends BaseController {
 		model.addAttribute("pageModel", pageModel);
 
 		model.addAttribute("menu", "page");
-		return ViewPath.USER_LIST;
+		return "user/list";
 	}
 
 }

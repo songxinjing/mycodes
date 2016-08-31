@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.songxinjing.base.constant.ViewPath;
 import com.songxinjing.base.controller.base.BaseController;
 import com.songxinjing.base.domain.TreeNode;
 import com.songxinjing.base.form.TreeNodeForm;
@@ -29,14 +28,14 @@ public class TreeNodeController extends BaseController {
 	@Autowired
 	TreeNodeService treeNodeService;
 
-	@RequestMapping(value = { ViewPath.TREE_INDEX }, method = RequestMethod.GET)
+	@RequestMapping(value = "tree/index", method = RequestMethod.GET)
 	public String index(Model model, HttpServletRequest request) {
 		logger.info("进入Tree页面");
 		model.addAttribute("menu", "tree");
-		return ViewPath.TREE_INDEX;
+		return "tree/index";
 	}
 
-	@RequestMapping(value = { ViewPath.TREE_DATA }, method = RequestMethod.GET)
+	@RequestMapping(value = "tree/data", method = RequestMethod.GET)
 	@ResponseBody
 	public List<TreeNodeForm> data(Model model, HttpServletRequest request, Integer key, Boolean deep) {
 		logger.info("获取Tree的数据");
@@ -49,14 +48,14 @@ public class TreeNodeController extends BaseController {
 		return treeNodeService.findForm(key, deep);
 	}
 
-	@RequestMapping(value = { ViewPath.TREE_EDIT }, method = RequestMethod.GET)
+	@RequestMapping(value = "tree/edit", method = RequestMethod.GET)
 	public String edit(Model model, HttpServletRequest request) {
 		logger.info("进入Tree编辑页面");
 		model.addAttribute("menu", "tree");
-		return ViewPath.TREE_EDIT;
+		return "tree/edit";
 	}
 
-	@RequestMapping(value = { ViewPath.TREE_SAVE_SELECTED }, method = RequestMethod.POST)
+	@RequestMapping(value = "tree/saveSelected", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean saveSelected(Model model, HttpServletRequest request, int[] keys) {
 		logger.info("保存选中节点");
@@ -64,14 +63,14 @@ public class TreeNodeController extends BaseController {
 		return true;
 	}
 
-	@RequestMapping(value = { ViewPath.TREE_GET_SELECTED }, method = RequestMethod.POST)
+	@RequestMapping(value = "tree/getSelected", method = RequestMethod.POST)
 	@ResponseBody
 	public List<TreeNode> getSelected(Model model, HttpServletRequest request) {
 		logger.info("获取选中节点");
 		return treeNodeService.getSelected("0001");
 	}
 
-	@RequestMapping(value = { ViewPath.TREE_SAVE }, method = RequestMethod.POST)
+	@RequestMapping(value = "tree/save", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean save(Model model, HttpServletRequest request, Integer key, String type, String nodeName) {
 		logger.info("保存Tree的数据");
@@ -95,7 +94,7 @@ public class TreeNodeController extends BaseController {
 		return false;
 	}
 
-	@RequestMapping(value = { ViewPath.TREE_DEL }, method = RequestMethod.POST)
+	@RequestMapping(value = "tree/del", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean del(Model model, HttpServletRequest request, Integer key) {
 		logger.info("删除节点");
@@ -106,7 +105,7 @@ public class TreeNodeController extends BaseController {
 		return true;
 	}
 
-	@RequestMapping(value = { ViewPath.TREE_CHILDLIST }, method = RequestMethod.POST)
+	@RequestMapping(value = "tree/childlist", method = RequestMethod.POST)
 	@ResponseBody
 	public List<TreeNode> childList(Model model, HttpServletRequest request, Integer key) {
 		logger.info("获取子节点数据");
@@ -116,7 +115,7 @@ public class TreeNodeController extends BaseController {
 		return treeNodeService.find(key).getChildren();
 	}
 
-	@RequestMapping(value = { ViewPath.TREE_UPDOWN }, method = RequestMethod.POST)
+	@RequestMapping(value = "tree/updown", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean upDown(Model model, HttpServletRequest request, Integer nodeId, String type) {
 		logger.info("调整子节点顺利");

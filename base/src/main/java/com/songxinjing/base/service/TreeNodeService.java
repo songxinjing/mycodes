@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.songxinjing.base.constant.DataDic;
+import com.songxinjing.base.constant.Constant;
 import com.songxinjing.base.dao.TreeNodeDao;
 import com.songxinjing.base.domain.TreeNode;
 import com.songxinjing.base.domain.User;
@@ -41,7 +41,7 @@ public class TreeNodeService extends BaseService<TreeNode, Integer> {
 	 */
 	public List<TreeNodeForm> findForm(int parentId, boolean deep) {
 		if (parentId == 0) { // 默认获取根节点
-			TreeNode node = find(DataDic.TREE_ROOT_ID);
+			TreeNode node = find(Constant.TREE_ROOT_ID);
 			List<TreeNode> list = new ArrayList<TreeNode>();
 			list.add(node);
 			return convert(list, deep);
