@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.songxinjing.base.constant.Constant;
 import com.songxinjing.base.controller.base.BaseController;
 import com.songxinjing.base.domain.TreeNode;
+import com.songxinjing.base.domain.User;
 import com.songxinjing.base.form.TreeNodeForm;
 import com.songxinjing.base.service.TreeNodeService;
 
@@ -59,7 +61,8 @@ public class TreeNodeController extends BaseController {
 	@ResponseBody
 	public boolean saveSelected(Model model, HttpServletRequest request, int[] keys) {
 		logger.info("保存选中节点");
-		treeNodeService.saveSelected(keys, "0001");
+		User loginUser = (User)request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
+		treeNodeService.saveSelected(keys, loginUser.getUserId());
 		return true;
 	}
 
@@ -67,7 +70,8 @@ public class TreeNodeController extends BaseController {
 	@ResponseBody
 	public List<TreeNode> getSelected(Model model, HttpServletRequest request) {
 		logger.info("获取选中节点");
-		return treeNodeService.getSelected("0001");
+		User loginUser = (User)request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
+		return treeNodeService.getSelected(loginUser.getUserId());
 	}
 
 	@RequestMapping(value = "tree/save", method = RequestMethod.POST)

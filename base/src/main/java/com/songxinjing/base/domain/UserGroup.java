@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,6 +48,12 @@ public class UserGroup implements Serializable {
 	@ManyToMany
 	private List<User> members;
 
+	/**
+	 * 用户组所属角色列表
+	 */
+	@ManyToMany(mappedBy = "userGroups", fetch = FetchType.EAGER)
+	private List<Role> roles;
+
 	public Integer getGroupId() {
 		return groupId;
 	}
@@ -77,6 +84,14 @@ public class UserGroup implements Serializable {
 
 	public void setMembers(List<User> members) {
 		this.members = members;
+	}
+
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
 	}
 
 }

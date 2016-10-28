@@ -18,7 +18,7 @@ import com.songxinjing.base.plugin.page.PageModel;
 import com.songxinjing.base.service.UserService;
 
 /**
- * 树型控制类
+ * 用户控制类
  * 
  * @author songxinjing
  * 

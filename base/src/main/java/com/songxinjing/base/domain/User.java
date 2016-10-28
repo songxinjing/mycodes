@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
@@ -49,13 +50,19 @@ public class User implements Serializable {
 	 */
 	@Column
 	private Byte state;
-	
+
 	/**
 	 * 用户所属用户组列表
 	 */
-	@ManyToMany(mappedBy = "members")
+	@ManyToMany(mappedBy = "members", fetch = FetchType.EAGER)
 	private List<UserGroup> groups;
-	
+
+	/**
+	 * 用户所属角色列表
+	 */
+	@ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
+	private List<Role> roles;
+
 	/**
 	 * 用户选中节点列表
 	 */
@@ -108,6 +115,14 @@ public class User implements Serializable {
 
 	public void setGroups(List<UserGroup> groups) {
 		this.groups = groups;
+	}
+
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
 	}
 
 	public List<TreeNode> getSelectedNodes() {

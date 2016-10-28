@@ -33,17 +33,30 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	</filter>
 	<filter-mapping>
 		<filter-name>encodingFilter</filter-name>
-		<url-pattern>/</url-pattern>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
 	<filter>
 		<filter-name>openSessionInViewFilter</filter-name>
 		<filter-class>org.springframework.orm.hibernate4.support.OpenSessionInViewFilter</filter-class>
 	</filter>
-
 	<filter-mapping>
 		<filter-name>openSessionInViewFilter</filter-name>
-		<url-pattern>*.html</url-pattern>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<filter>
+		<filter-name>privFilter</filter-name>
+		<filter-class>com.songxinjing.base.filter.PrivFilter</filter-class>
+		<init-param>
+			<!-- 忽略应用功能URL路径名 -->
+			<param-name>excludeUrl</param-name>
+			<param-value>/index.html,/resources,/system</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>privFilter</filter-name>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
 	<servlet>
@@ -55,7 +68,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>dispatch</servlet-name>
 		<url-pattern>*.html</url-pattern>
 	</servlet-mapping>
-
+	
 	<session-config>
 		<session-timeout>60</session-timeout>
 	</session-config>
@@ -63,6 +76,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	<error-page>
 		<error-code>404</error-code>
 		<location>/system/404.html</location>
+	</error-page>
+	<error-page>
+		<error-code>403</error-code>
+		<location>/system/error.html</location>
 	</error-page>
 	<error-page>
 		<error-code>500</error-code>
