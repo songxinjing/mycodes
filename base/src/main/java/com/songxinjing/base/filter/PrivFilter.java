@@ -22,6 +22,7 @@ import com.songxinjing.base.constant.Constant;
 import com.songxinjing.base.domain.Privilege;
 import com.songxinjing.base.domain.Role;
 import com.songxinjing.base.domain.User;
+import com.songxinjing.base.domain.UserGroup;
 import com.songxinjing.base.service.PrivService;
 
 /**
@@ -72,6 +73,7 @@ public class PrivFilter implements Filter {
 		}
 
 		String reqUrl = req.getRequestURI();
+		logger.info("访问URL：" + reqUrl);
 
 		// 获取请求url对应的权限
 		Privilege privForUrl = findPrivForUrl(req, privService.findEnable());
@@ -95,12 +97,23 @@ public class PrivFilter implements Filter {
 					return;
 				}
 			}
-			
+			// 获取用户属于的用户组
+			for (UserGroup group : user.getGroups()) {
+				// 获取用户组拥有的所有权限
+				for (Role role : group.getRoles()) {
+					// 拥有权限
+					if (role.getPrivileges().contains(privForUrl)) {
+						fc.doFilter(request, response);
+						return;
+					}
+				}
+			}
+
 			logger.info("用户" + user.getUserId() + "没有访问" + reqUrl + "的权限！");
 			resp.sendError(HttpServletResponse.SC_FORBIDDEN);
 			return;
 		}
-		
+
 		logger.info(reqUrl + "需要访问权限！");
 		resp.sendError(HttpServletResponse.SC_FORBIDDEN);
 		return;

@@ -11,6 +11,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 /**
  * 用户组信息表实体类
  * 
@@ -52,6 +55,7 @@ public class UserGroup implements Serializable {
 	 * 用户组所属角色列表
 	 */
 	@ManyToMany(mappedBy = "userGroups", fetch = FetchType.EAGER)
+	@Fetch(FetchMode.SUBSELECT)
 	private List<Role> roles;
 
 	public Integer getGroupId() {
