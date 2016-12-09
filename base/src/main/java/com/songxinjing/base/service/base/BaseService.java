@@ -108,14 +108,25 @@ public abstract class BaseService<T, PK extends Serializable> {
 	}
 
 	/**
+	 * HQL查询
+	 * 
+	 * @param queryString
+	 * @param values
+	 * @return
+	 */
+	public List<T> findHql(final String hql, final Object... values) {
+		return dao.findHql(hql);
+	}
+
+	/**
 	 * 分页查询
+	 * 
 	 * @param from
 	 * @param size
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public List<T> findPage(String hql, int from, int size) {
-		return (List<T>) dao.findPage(hql, from, size);
+		return dao.findPage(hql, from, size);
 	}
 
 }

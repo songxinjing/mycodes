@@ -9,18 +9,18 @@
 	<packaging>war</packaging>
 
 	<properties>
-		<version.springframework>4.3.1.RELEASE</version.springframework>
-		<version.hibernate>4.3.11.Final</version.hibernate>
+		<version.springframework>4.3.4.RELEASE</version.springframework>
+		<version.hibernate>5.2.5.Final</version.hibernate>
 		<version.velocity>1.7</version.velocity>
 		<version.velocity-tools>2.0</version.velocity-tools>
 		<version.aspectjweaver>1.8.9</version.aspectjweaver>
-		<version.fastjson>1.2.14</version.fastjson>
-		<version.commons.beanutils>1.9.2</version.commons.beanutils>
-		<version.commons-lang3>3.4</version.commons-lang3>
+		<version.fastjson>1.2.21</version.fastjson>
+		<version.commons.beanutils>1.9.3</version.commons.beanutils>
+		<version.commons-lang3>3.5</version.commons-lang3>
 		<version.commons-codec>1.10</version.commons-codec>
 		<version.mysql-connector>5.1.39</version.mysql-connector>
 		<version.servlet>3.1.0</version.servlet>
-		<version.log4j>2.3</version.log4j>
+		<version.log4j>2.7</version.log4j>
 		<version.junit>4.12</version.junit>
 	</properties>
 

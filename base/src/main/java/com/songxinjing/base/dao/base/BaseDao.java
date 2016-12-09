@@ -4,10 +4,11 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
-import org.hibernate.Query;
+import javax.persistence.TypedQuery;
+
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.util.Assert;
 
 import com.songxinjing.base.util.ReflectionUtil;
@@ -108,29 +109,43 @@ public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSu
 		Assert.notNull(entity);
 		return getHibernateTemplate().findByExample(entity);
 	}
-	
+
+	/**
+	 * HQL查询
+	 * 
+	 * @param hql
+	 * @param values
+	 * @return
+	 */
+	public List<T> findHql(final String hql, final Object... values) {
+		Assert.hasText(hql);
+		return createQuery(hql, values).getResultList();
+	}
+
 	/**
 	 * 分页查询
-	 * @param queryString
+	 * 
+	 * @param hql
 	 * @param from
 	 * @param size
 	 * @param values
 	 * @return
 	 */
-	public List<?> findPage(final String queryString, final int from, final int size, final Object... values) {
-		Assert.hasText(queryString);
-		return createQuery(queryString, values).setFirstResult(from).setMaxResults(size).list();
+	public List<T> findPage(final String hql, final int from, final int size, final Object... values) {
+		Assert.hasText(hql);
+		return createQuery(hql, values).setFirstResult(from).setMaxResults(size).getResultList();
 	}
-	
+
 	/**
 	 * 创建Query对象
-	 * @param sql
+	 * 
+	 * @param hql
 	 * @param values
 	 * @return
 	 */
-	public Query createQuery(String sql, Object... values) {
-		Assert.hasText(sql);
-		Query query = this.currentSession().createQuery(sql);
+	public TypedQuery<T> createQuery(String hql, Object... values) {
+		Assert.hasText(hql);
+		TypedQuery<T> query = this.currentSession().createQuery(hql, entityClass);
 		if (values != null) {
 			for (int i = 0; i < values.length; i++) {
 				query.setParameter(i, values[i]);

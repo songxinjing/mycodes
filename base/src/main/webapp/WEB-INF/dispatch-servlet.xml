@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans  
-		classpath:/org/springframework/beans/factory/xml/spring-beans-4.2.xsd
+		classpath:/org/springframework/beans/factory/xml/spring-beans-4.3.xsd
 		http://www.springframework.org/schema/mvc 
-		classpath:/org/springframework/web/servlet/config/spring-mvc-4.2.xsd
+		classpath:/org/springframework/web/servlet/config/spring-mvc-4.3.xsd
 		http://www.springframework.org/schema/context 
-		classpath:/org/springframework/context/config/spring-context-4.2.xsd"
+		classpath:/org/springframework/context/config/spring-context-4.3.xsd"
 	default-lazy-init="false">
 
 	<context:component-scan base-package="com.songxinjing.base.controller" />

@@ -61,7 +61,7 @@ public class TreeNodeController extends BaseController {
 	@ResponseBody
 	public boolean saveSelected(Model model, HttpServletRequest request, int[] keys) {
 		logger.info("保存选中节点");
-		User loginUser = (User)request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
+		User loginUser = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
 		treeNodeService.saveSelected(keys, loginUser.getUserId());
 		return true;
 	}
@@ -70,8 +70,11 @@ public class TreeNodeController extends BaseController {
 	@ResponseBody
 	public List<TreeNode> getSelected(Model model, HttpServletRequest request) {
 		logger.info("获取选中节点");
-		User loginUser = (User)request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
-		return treeNodeService.getSelected(loginUser.getUserId());
+		User loginUser = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
+		if (loginUser != null) {
+			return treeNodeService.getSelected(loginUser.getUserId());
+		}
+		return null;
 	}
 
 	@RequestMapping(value = "tree/save", method = RequestMethod.POST)
