@@ -1,9 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<version>0.0.1-SNAPSHOT</version>
-	<artifactId>goodfind</artifactId>
+
 	<groupId>com.songxinjing</groupId>
+	<artifactId>goodfind</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
 	<name>goodfind</name>
 	<description>广发多空套利工具</description>
 
@@ -13,29 +16,46 @@
 		<version.log4j>2.7</version.log4j>
 		<version.junit>4.12</version.junit>
 		<version.httpclient>4.5.3</version.httpclient>
+		<version.selenium-java>3.3.1</version.selenium-java>
 	</properties>
 
 	<dependencies>
 
-		<!-- springframework -->		
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
-			<version>${version.springframework}</version>
-		</dependency>
-		
 		<!-- fastJson -->
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
 			<version>${version.fastjson}</version>
 		</dependency>
-		
+
 		<!-- httpclient -->
 		<dependency>
-  			<groupId>org.apache.httpcomponents</groupId>
- 			<artifactId>httpclient</artifactId>
-  			<version>${version.httpclient}</version>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>${version.httpclient}</version>
+		</dependency>
+
+		<!-- selenium-java -->
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>${version.selenium-java}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sourceforge.tess4j</groupId>
+			<artifactId>tess4j</artifactId>
+			<version>3.2.1</version>
+			<exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
 		</dependency>
 
 		<!-- log4j -->
@@ -49,23 +69,12 @@
 			<artifactId>log4j-slf4j-impl</artifactId>
 			<version>${version.log4j}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-web</artifactId>
-			<version>${version.log4j}</version>
-		</dependency>
 
 		<!-- test -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${version.junit}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${version.springframework}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -84,5 +93,5 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 </project>
