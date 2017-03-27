@@ -1,6 +1,10 @@
 package com.songxinjing.goodfind.util;
 
+import java.text.SimpleDateFormat;
+
 public class CommUtils {
+	
+	public static SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss,SSS");
 
 	/**
 	 * 当前线程等待

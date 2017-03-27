@@ -6,6 +6,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 
 import javax.imageio.ImageIO;
 
@@ -19,8 +20,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.songxinjing.goodfind.httpclient.GFHttpClient;
 import com.songxinjing.goodfind.robot.GFRobot;
@@ -32,46 +31,25 @@ import net.sourceforge.tess4j.TesseractException;
 
 public class GFSelenium {
 
-	protected static final Logger logger = LoggerFactory.getLogger(GFSelenium.class);
-
 	private static RemoteWebDriver driver;
-	
-	private static boolean isRefresh = true;
-	
-	private static Thread refresh = new Thread() {
-		public void run() {
-			while (isRefresh) {
-				WebElement fresh = null;
-				try {
-					fresh = driver.findElementById("ext-gen101");
-				} catch (NoSuchElementException nee) {
-					logger.debug("没有找到刷新按钮！！！");
-				}
-				if (fresh != null) {
-					try {
-						WebElement notice = driver.findElementById("ext-comp-1070");
-						notice.findElement(By.id("ext-gen270")).click();
-					} catch (NoSuchElementException nee) {
-						logger.debug("没有找到弹出窗口！！！");
-					}
-					fresh.click();
-				}
-				CommUtils.sleep(30 * 1000);
-			}
-		}
-	};
 
 	private static Tesseract instance = new Tesseract();
+	
+	private static DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+	
+	static {		
+		ChromeOptions options = new ChromeOptions();
+		options.addArguments("user-data-dir=/Users/songxinjing/Library/Application Support/Google/Chrome/Default");	
+		capabilities.setCapability(ChromeOptions.CAPABILITY, options);
+		instance.setDatapath("/usr/local/share");
+		instance.setTessVariable("tessedit_char_whitelist", "0123456789abcdefghijklmnopqrstuvwxyz");
+	}
 
 	public static void start() throws MalformedURLException {
-		ChromeOptions options = new ChromeOptions();
-		options.addArguments("user-data-dir=/Users/songxinjing/Library/Application Support/Google/Chrome/Default");
-		DesiredCapabilities capabilities = DesiredCapabilities.chrome();
-		capabilities.setCapability(ChromeOptions.CAPABILITY, options);
+		System.out.println("启动浏览器...");
 		driver = new RemoteWebDriver(new URL("http://localhost:9515"), capabilities);
 		driver.manage().window().setPosition(new Point(0, 0));
 		driver.manage().window().setSize(new Dimension(960, 700));
-		instance.setDatapath("/usr/local/share");
 	}
 
 	public static void login() {
@@ -82,7 +60,7 @@ public class GFSelenium {
 	}
 
 	public static boolean trylogin() {
-		driver.get("https://trade.gf.com.cn/");
+		driver.get("https://etrade.gf.com.cn/");
 		CommUtils.sleep(500);
 		WebElement user = driver.findElementById("inputuser");
 		user.sendKeys("020109004956");
@@ -94,12 +72,14 @@ public class GFSelenium {
 			} catch (AWTException e) {
 				e.printStackTrace();
 			}
-			if (findVeriCode()) {
+			boolean isVeri = findVeriCode();
+			if (isVeri) {
 				WebElement loginButton = null;
 				try {
 					loginButton = driver.findElementByXPath("//*[@id=\"loginContainer\"]/div[1]/a[1]");
 				} catch (NoSuchElementException nee) {
-					logger.debug("没有找到刷新按钮！！！");
+					Date now = new Date(); 
+					System.out.println(CommUtils.format.format(now) + " 没有找到登录按钮！！！登录成功！！！");
 				}
 
 				if (loginButton == null) {
@@ -121,18 +101,6 @@ public class GFSelenium {
 
 		return true;
 	}
-	
-	public static void refreshStart(){
-		refresh.start();
-	}
-	
-	public static void refreshWait(){
-		isRefresh = false;
-	}
-	
-	public static void refreshNotify(){
-		isRefresh = true;
-	}
 
 	public static boolean findVeriCode() {
 		byte[] imgBytes = driver.getScreenshotAs(OutputType.BYTES);
@@ -145,7 +113,7 @@ public class GFSelenium {
 					size.getHeight() * 2);
 			veriImg = ImageUtils.cleanImage(veriImg);
 			String veriCodeValue = instance.doOCR(veriImg).trim().replaceAll("\\s*", "");
-			logger.info("veriCodeValue: " + veriCodeValue);
+			System.out.println("veriCodeValue: " + veriCodeValue);
 			WebElement veriCode = driver.findElementById("verificationCode");
 			WebElement loginButton = driver.findElementByXPath("//*[@id=\"loginContainer\"]/div[1]/a[1]");
 			if (veriCodeValue.length() == 5 && CommUtils.checkString(veriCodeValue)) {
@@ -153,10 +121,10 @@ public class GFSelenium {
 				veriCode.clear();
 				veriCode.sendKeys(veriCodeValue);
 				loginButton.click();
-				CommUtils.sleep(500);
+				CommUtils.sleep(2000);
 				return true;
 			} else {
-				logger.info("验证码获取失败，重新登录！！！");
+				System.out.println("验证码获取失败，重新登录！！！");
 				CommUtils.sleep(500);
 				veriCode.clear();
 				veriCode.sendKeys("12345");
@@ -178,7 +146,7 @@ public class GFSelenium {
 	public static String getSessionValue(String sessionId) {
 		for (Cookie cookie : driver.manage().getCookies()) {
 			if (sessionId.equals(cookie.getName())) {
-				logger.debug(cookie.getName() + " : " + cookie.getValue());
+				System.out.println(cookie.getName() + " : " + cookie.getValue());
 				return cookie.getValue();
 			}
 		}

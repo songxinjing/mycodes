@@ -1,10 +1,7 @@
 package com.songxinjing.goodfind.util;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 public class ImageUtils {
 
@@ -39,42 +36,7 @@ public class ImageUtils {
 				image.setRGB(w, h, imgArray[w][h]);
 			}
 		}
-		ImageIO.write(image, "png", new File("logs/" + System.currentTimeMillis() + "-new.png"));
-		return image;
-	}
-
-	public static BufferedImage cleanImage2(BufferedImage image) throws IOException {
-
-		int height = image.getHeight();
-		int width = image.getWidth();
-
-		int[][] imgArray = new int[width][height];
-		for (int w = 0; w < width; w++) {
-			for (int h = 0; h < height; h++) {
-				int argb = image.getRGB(w, h);
-				int r = (int) (argb >> 16) & 0xFF;
-				int g = (int) (argb >> 8) & 0xFF;
-				int b = (int) (argb >> 0) & 0xFF;
-				if (r >= 50 && g <= 100 && b <= 100) {
-					imgArray[w][h] = 0x000000;
-				} else {
-					imgArray[w][h] = 0xFFFFFF;
-				}
-			}
-		}
-
-		imgArray = correde(imgArray);
-		// imgArray = correde(imgArray, 1);
-		// imgArray = correde(imgArray, 1);
-		imgArray = dilate(imgArray);
-		// imgArray = dilate(imgArray, 1);
-
-		for (int w = 0; w < width; w++) {
-			for (int h = 0; h < height; h++) {
-				image.setRGB(w, h, imgArray[w][h]);
-			}
-		}
-		ImageIO.write(image, "png", new File("logs/test.png"));
+		//ImageIO.write(image, "png", new File("logs/" + System.currentTimeMillis() + "-new.png"));
 		return image;
 	}
 
