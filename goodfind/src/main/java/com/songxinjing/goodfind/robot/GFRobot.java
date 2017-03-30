@@ -9,8 +9,8 @@ public class GFRobot {
 
 	public static void entryPwd() throws AWTException {
 		Robot robot = new Robot();
-		robot.delay(500);
-		robot.setAutoDelay(100);
+		robot.delay(200);
+		robot.setAutoDelay(50);
 		robot.mouseMove(800, 365);
 		robot.mousePress(InputEvent.BUTTON1_MASK);
         robot.mouseRelease(InputEvent.BUTTON1_MASK);

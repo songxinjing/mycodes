@@ -3,7 +3,6 @@ package com.songxinjing.goodfind.httpclient;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.http.Header;
@@ -11,6 +10,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpVersion;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -20,16 +20,24 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.songxinjing.goodfind.domain.OrderInfo;
 import com.songxinjing.goodfind.domain.ProdPrice;
+import com.songxinjing.goodfind.exception.ResponseNullException;
 import com.songxinjing.goodfind.util.CommUtils;
 
 public class GFHttpClient {
 
+	protected static final Logger logger = LoggerFactory.getLogger(GFHttpClient.class);
+
 	private static CloseableHttpClient httpclient = HttpClients.createDefault();
+
+	private static RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(5000).setConnectTimeout(5000)
+			.setConnectionRequestTimeout(5000).build();
 
 	private static String jSessionId;
 
@@ -53,6 +61,7 @@ public class GFHttpClient {
 	public static CloseableHttpResponse httpGet(String url, Header[] headers)
 			throws ClientProtocolException, IOException {
 		HttpGet httpGet = new HttpGet(url);
+		httpGet.setConfig(requestConfig);
 		httpGet.setProtocolVersion(HttpVersion.HTTP_1_1);
 		httpGet.setHeaders(headers);
 		return httpclient.execute(httpGet);
@@ -61,6 +70,7 @@ public class GFHttpClient {
 	public static CloseableHttpResponse httpPost(String url, Header[] headers, List<NameValuePair> nvps)
 			throws ClientProtocolException, IOException {
 		HttpPost httpPost = new HttpPost(url);
+		httpPost.setConfig(requestConfig);
 		httpPost.setProtocolVersion(HttpVersion.HTTP_1_1);
 		httpPost.setHeaders(headers);
 		httpPost.setEntity(new UrlEncodedFormEntity(nvps));
@@ -83,7 +93,14 @@ public class GFHttpClient {
 		return list;
 	}
 
-	public static ProdPrice getProdPrice(String fundCode) {
+	/**
+	 * 获取价格
+	 * 
+	 * @param fundCode
+	 * @return
+	 * @throws ResponseNullException
+	 */
+	public static ProdPrice getProdPrice(String fundCode) throws ResponseNullException {
 
 		String url = "https://etrade.gf.com.cn/entry";
 		List<Header> list = getGFHeaders();
@@ -106,7 +123,8 @@ public class GFHttpClient {
 					String body = EntityUtils.toString(entity);
 					JSONObject json = JSONObject.parseObject(body);
 					if (json == null) {
-						return null;
+						logger.info("获取价格失败！");
+						throw new ResponseNullException();
 					}
 					JSONArray dataArray = json.getJSONArray("data");
 					if (dataArray != null && dataArray.size() > 0) {
@@ -117,7 +135,6 @@ public class GFHttpClient {
 						prodPrice.setSalePrice1(data.getString("sale_price1"));
 						prodPrice.setBuyAmount1(data.getFloat("buy_amount1").intValue() / 1000);
 						prodPrice.setSaleAmount1(data.getFloat("sale_amount1").intValue() / 1000);
-						// logger.debug(prodPrice.toString());
 						return prodPrice;
 					}
 				}
@@ -128,44 +145,6 @@ public class GFHttpClient {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	/**
-	 * 单向订单
-	 * 
-	 * @param longProd
-	 * @param shortProd
-	 * @param buyOrsell
-	 * @return
-	 */
-	public static void singleOrder(OrderInfo info) {
-
-		String url = "https://etrade.gf.com.cn/entry";
-		List<Header> list = getGFHeaders();
-		list.add(new BasicHeader("Cookie",
-				"name=value; JSESSIONID=" + jSessionId + "; dse_sessionId=" + dseSessionId + "; userId=" + userId));
-		Header[] headers = list.toArray(new Header[list.size()]);
-
-		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-		nvps.add(new BasicNameValuePair("classname", "com.gf.etrade.control.NXBUF2Control"));
-		nvps.add(new BasicNameValuePair("method", "nxbentrust"));
-		nvps.add(new BasicNameValuePair("dse_sessionId", dseSessionId));
-		nvps.add(new BasicNameValuePair("fund_code", info.getProdCode()));
-		nvps.add(new BasicNameValuePair("entrust_amount", String.valueOf(info.getOrderNum())));
-		nvps.add(new BasicNameValuePair("entrust_price", info.getOrderPrice()));
-		if (info.isBuy()) {
-			nvps.add(new BasicNameValuePair("entrust_bs", "1"));
-		} else {
-			nvps.add(new BasicNameValuePair("entrust_bs", "2"));
-		}
-		nvps.add(new BasicNameValuePair("auto_deal", "true"));
-
-		try {
-			// logger.debug("Begin Send...");
-			GFHttpClient.httpPost(url, headers, nvps);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -205,7 +184,6 @@ public class GFHttpClient {
 		nvps.add(new BasicNameValuePair("entrust_bs", buyOrsell));
 
 		try {
-			// logger.debug("Begin Send...");
 			GFHttpClient.httpPost(url, headers, nvps);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -217,9 +195,9 @@ public class GFHttpClient {
 	 * 
 	 * @param isBuy
 	 * @return
+	 * @throws ResponseNullException
 	 */
-	public static List<OrderInfo> orderCheck(boolean isBuy) {
-
+	public static List<OrderInfo> orderCheck() throws ResponseNullException {
 		String url = "https://etrade.gf.com.cn/entry";
 		List<Header> list = getGFHeaders();
 		list.add(new BasicHeader("Cookie",
@@ -243,19 +221,19 @@ public class GFHttpClient {
 
 		List<OrderInfo> orderInfos = new ArrayList<OrderInfo>();
 		try {
-			// logger.debug("Begin Send...");
 			CloseableHttpResponse response = GFHttpClient.httpPost(url, headers, nvps);
 			int status = response.getStatusLine().getStatusCode();
 			if (status >= 200 && status < 300) {
 				HttpEntity entity = response.getEntity();
-
 				if (entity != null) {
 					String body = EntityUtils.toString(entity);
 					JSONObject json = JSONObject.parseObject(body);
 					if (json == null) {
-						return null;
+						logger.info("获取未成交订单失败！");
+						throw new ResponseNullException();
 					}
 					int notDeal = Integer.parseInt(json.getString("total"));
+					logger.info("未成交订单数量：" + notDeal);
 					if (notDeal > 0) {
 						JSONArray dataArray = json.getJSONArray("data");
 						for (int i = 0; i < dataArray.size(); i++) {
@@ -263,7 +241,12 @@ public class GFHttpClient {
 							OrderInfo info = new OrderInfo();
 							info.setProdCode(data.getString("prod_code"));
 							info.setEntrustNo(data.getString("entrust_no"));
-							info.setBuy(isBuy);
+							String buyOrSell = data.getString("prod_prop_dict").trim();
+							if ("多空杠杆买单".equals(buyOrSell)) {
+								info.setBuy(true);
+							} else {
+								info.setBuy(false);
+							}
 							info.setOrderPrice(data.getString("entrust_price"));
 							info.setOrderNum(data.getFloat("entrust_amount").intValue());
 							orderInfos.add(info);
@@ -277,7 +260,7 @@ public class GFHttpClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return orderInfos;
 	}
 
 	/**
@@ -285,8 +268,9 @@ public class GFHttpClient {
 	 * 
 	 * @param
 	 * @return
+	 * @throws ResponseNullException
 	 */
-	public static boolean cancelOrder(String entrustNo) {
+	public static boolean cancelOrder(String entrustNo) throws ResponseNullException {
 
 		String url = "https://etrade.gf.com.cn/entry";
 		List<Header> list = getGFHeaders();
@@ -301,18 +285,18 @@ public class GFHttpClient {
 		nvps.add(new BasicNameValuePair("entrust_no", entrustNo));
 
 		try {
-			// logger.debug("Begin Send...");
 			CloseableHttpResponse response = GFHttpClient.httpPost(url, headers, nvps);
 			int status = response.getStatusLine().getStatusCode();
 			if (status >= 200 && status < 300) {
 				HttpEntity entity = response.getEntity();
-
 				if (entity != null) {
 					String body = EntityUtils.toString(entity);
 					JSONObject json = JSONObject.parseObject(body);
 					if (json == null) {
-						return false;
+						logger.info("撤销订单失败！");
+						throw new ResponseNullException();
 					}
+					logger.info("撤销订单...应答：" + json.getBoolean("success"));
 					return json.getBoolean("success");
 				}
 			} else {
@@ -354,7 +338,7 @@ public class GFHttpClient {
 		return false;
 	}
 
-	public static void findArbitrage(ProdPrice longProd, ProdPrice shortProd) {
+	public static void findArbitrage(ProdPrice longProd, ProdPrice shortProd) throws ResponseNullException {
 
 		BigDecimal bdLongSell = new BigDecimal(longProd.getSalePrice1());
 		BigDecimal bdShortSell = new BigDecimal(shortProd.getSalePrice1());
@@ -362,38 +346,11 @@ public class GFHttpClient {
 
 		if (buyArbi.compareTo(bd1_998) <= 0 || priceCheck(longProd, shortProd, true, buyArbi)) {
 			doubleOrder(longProd, shortProd, "1");
-			Date now = new Date();
-			System.out.println(CommUtils.format.format(now) + " [" + longProd.getProdCode() + "]Arbi!!!===Long:"
-					+ longProd.getSalePrice1() + "[" + longProd.getSaleAmount1() + "], Short:"
-					+ shortProd.getSalePrice1() + "[" + shortProd.getSaleAmount1() + "], buyArbi=" + buyArbi);
+			logger.info("[" + longProd.getProdCode() + "]Arbi!!!===Long:" + longProd.getSalePrice1() + "["
+					+ longProd.getSaleAmount1() + "], Short:" + shortProd.getSalePrice1() + "["
+					+ shortProd.getSaleAmount1() + "], buyArbi=" + buyArbi);
 			CommUtils.sleep(5000);
-			List<OrderInfo> infos = orderCheck(true);
-			while (infos != null && infos.size() > 0) {
-				System.out.println("未成交订单数量：" + infos.size());
-				boolean findPrice = true;
-				for (OrderInfo info : infos) {
-					boolean isCancel = cancelOrder(info.getEntrustNo());
-					if (isCancel) {
-						ProdPrice prodPrice = getProdPrice(info.getProdCode());
-						if (prodPrice == null) {
-							findPrice = false;
-							break;
-						}
-						if (info.isBuy()) {
-							info.setOrderPrice(prodPrice.getSalePrice1());
-						} else {
-							info.setOrderPrice(prodPrice.getBuyPrice1());
-						}
-						singleOrder(info);
-					}
-				}
-				if (!findPrice) {
-					break;
-				}
-				CommUtils.sleep(5000);
-				infos = orderCheck(true);
-				System.out.println("未成交订单数量：" + infos.size());
-			}
+			dealOneSide();
 			return;
 		}
 
@@ -403,45 +360,80 @@ public class GFHttpClient {
 
 		if (sellArbi.compareTo(bd2_002) >= 0 || priceCheck(longProd, shortProd, false, sellArbi)) {
 			doubleOrder(longProd, shortProd, "2");
-			Date now = new Date();
-			System.out.println(CommUtils.format.format(now) + " [" + longProd.getProdCode() + "]Arbi!!!===Long:"
-					+ longProd.getBuyPrice1() + "[" + longProd.getBuyAmount1() + "], Short:" + shortProd.getBuyPrice1()
-					+ "[" + shortProd.getBuyAmount1() + "], sellArbi=" + sellArbi);
+			logger.info("[" + longProd.getProdCode() + "]Arbi!!!===Long:" + longProd.getBuyPrice1() + "["
+					+ longProd.getBuyAmount1() + "], Short:" + shortProd.getBuyPrice1() + "["
+					+ shortProd.getBuyAmount1() + "], sellArbi=" + sellArbi);
 			CommUtils.sleep(5000);
-			List<OrderInfo> infos = orderCheck(false);
-			while (infos != null && infos.size() > 0) {
-				System.out.println("未成交订单数量：" + infos.size());
-				boolean findPrice = true;
-				for (OrderInfo info : infos) {
-					boolean isCancel = cancelOrder(info.getEntrustNo());
-					if (isCancel) {
-						ProdPrice prodPrice = getProdPrice(info.getProdCode());
-						if (prodPrice == null) {
-							findPrice = false;
-							break;
-						}
-						if (info.isBuy()) {
-							info.setOrderPrice(prodPrice.getSalePrice1());
-						} else {
-							info.setOrderPrice(prodPrice.getBuyPrice1());
-						}
-						singleOrder(info);
-					}
-				}
-				if (!findPrice) {
-					break;
-				}
-				CommUtils.sleep(5000);
-				infos = orderCheck(false);
-				System.out.println("未成交订单数量：" + infos.size());
-			}
+			dealOneSide();
 			return;
 		}
 
-		Date now = new Date();
-		System.out.println(
-				CommUtils.format.format(now) + " [" + longProd.getProdCode() + "] " + sellArbi + " - " + buyArbi);
+		logger.info("[" + longProd.getProdCode() + "] " + sellArbi + " - " + buyArbi);
 
 	}
 
+	/**
+	 * 处理单边成交
+	 * 
+	 * @throws NotGetPriceException
+	 */
+	public static void dealOneSide() throws ResponseNullException {
+		List<OrderInfo> infos = orderCheck();
+		for (OrderInfo info : infos) {
+			boolean isCancel = cancelOrder(info.getEntrustNo());
+			if (isCancel) {
+				logger.info("成功撤销订单：" + info.getEntrustNo());
+				CommUtils.sleep(2000);
+				ProdPrice prodPrice = getProdPrice(info.getProdCode());
+				if (prodPrice == null) {
+					logger.info("处理单边，获取价格失败！");
+					throw new ResponseNullException();
+				}
+				if (info.isBuy()) {
+					info.setOrderPrice(prodPrice.getSalePrice1());
+				} else {
+					info.setOrderPrice(prodPrice.getBuyPrice1());
+				}
+				CommUtils.sleep(200);
+				logger.info("发起单边弥补订单");
+				singleOrder(info);
+			}
+		}
+	}
+
+	/**
+	 * 单向订单
+	 * 
+	 * @param OrderInfo
+	 * @param buyOrsell
+	 * @return
+	 */
+	public static void singleOrder(OrderInfo info) {
+
+		String url = "https://etrade.gf.com.cn/entry";
+		List<Header> list = getGFHeaders();
+		list.add(new BasicHeader("Cookie",
+				"name=value; JSESSIONID=" + jSessionId + "; dse_sessionId=" + dseSessionId + "; userId=" + userId));
+		Header[] headers = list.toArray(new Header[list.size()]);
+
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		nvps.add(new BasicNameValuePair("classname", "com.gf.etrade.control.NXBUF2Control"));
+		nvps.add(new BasicNameValuePair("method", "nxbentrust"));
+		nvps.add(new BasicNameValuePair("dse_sessionId", dseSessionId));
+		nvps.add(new BasicNameValuePair("fund_code", info.getProdCode()));
+		nvps.add(new BasicNameValuePair("entrust_amount", String.valueOf(info.getOrderNum())));
+		nvps.add(new BasicNameValuePair("entrust_price", info.getOrderPrice()));
+		if (info.isBuy()) {
+			nvps.add(new BasicNameValuePair("entrust_bs", "1"));
+		} else {
+			nvps.add(new BasicNameValuePair("entrust_bs", "2"));
+		}
+		nvps.add(new BasicNameValuePair("auto_deal", "true"));
+
+		try {
+			GFHttpClient.httpPost(url, headers, nvps);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
