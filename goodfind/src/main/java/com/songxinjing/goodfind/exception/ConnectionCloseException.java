@@ -1,6 +1,6 @@
 package com.songxinjing.goodfind.exception;
 
-public class ResponseNullException extends Exception {
+public class ConnectionCloseException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 

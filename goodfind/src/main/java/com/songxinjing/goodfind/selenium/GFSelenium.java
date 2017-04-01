@@ -92,8 +92,6 @@ public class GFSelenium {
 			}
 		} while (continueVeri);
 
-		CommUtils.sleep(2 * 1000);
-
 		GFHttpClient.setjSessionId(getSessionValue("JSESSIONID"));
 		GFHttpClient.setDseSessionId(getSessionValue("dse_sessionId"));
 		return true;
@@ -142,7 +140,7 @@ public class GFSelenium {
 				driver.quit();
 			}
 		}.start();
-		CommUtils.sleep(5000);
+		CommUtils.sleep(3000);
 	}
 
 	public static String getSessionValue(String sessionId) {
